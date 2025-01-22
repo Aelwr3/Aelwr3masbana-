@@ -27,35 +27,33 @@
         .icon {
             position: absolute;
             opacity: 0.2;
-            width: 100px;
-            height: 100px;
-            animation: moveIcon 6s ease-in-out infinite;
+            width: 80px;
+            height: 80px;
+            animation: moveIcon 10s ease-in-out infinite;
         }
 
-        .icon-1 { top: 10%; left: 15%; animation-delay: 0s; }
-        .icon-2 { top: 40%; left: 70%; animation-delay: 1s; }
-        .icon-3 { top: 70%; left: 25%; animation-delay: 2s; }
+        .icon-1 { top: 10%; left: 10%; animation-delay: 0s; }
+        .icon-2 { top: 30%; left: 60%; animation-delay: 2s; }
+        .icon-3 { top: 70%; left: 30%; animation-delay: 4s; }
 
         @keyframes moveIcon {
             0%, 100% {
                 transform: translate(0, 0);
             }
             50% {
-                transform: translate(20px, 20px);
+                transform: translate(30px, 30px);
             }
         }
 
-        /* تحسين واجهة نافذة إدخال الزبون */
         .container {
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
             border-radius: 15px;
             padding: 30px;
-            width: 80%;
-            max-width: 500px;
+            width: 90%;
+            max-width: 400px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
             text-align: center;
-            position: relative;
             z-index: 1;
         }
 
@@ -72,7 +70,7 @@
             border: none;
             border-radius: 8px;
             margin: 10px;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -88,50 +86,35 @@
 
         button i {
             margin-left: 10px;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
         }
 
-        #customerList {
-            list-style: none;
-            padding: 0;
-        }
-
-        #customerList li {
-            background: rgba(255, 255, 255, 0.2);
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
+        /* نافذة إدخال الزبون */
         #addCustomerModal {
             display: none;
             position: fixed;
-            z-index: 1;
+            z-index: 10;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
+            background: #fff;
             padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 300px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px;
         }
 
         .modal-content input {
-            width: 100%;
+            width: 90%;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
@@ -139,14 +122,14 @@
         }
 
         .modal-content button {
-            width: 100%;
+            width: 90%;
             padding: 10px;
-            margin: 10px 0;
+            background-color: #10b981;
             border: none;
             border-radius: 5px;
-            cursor: pointer;
-            background-color: #10b981;
             color: white;
+            font-size: 1rem;
+            cursor: pointer;
             transition: background-color 0.3s;
         }
 
@@ -157,83 +140,51 @@
 </head>
 <body>
 
-    <!-- إضافة الأيقونات المتحركة في الخلفية -->
+    <!-- الأيقونات المتحركة -->
     <img src="https://cdn-icons-png.flaticon.com/512/5455/5455723.png" class="icon icon-1" alt="Handshake Icon">
     <img src="https://cdn-icons-png.flaticon.com/512/1865/18653528.png" class="icon icon-2" alt="Customer Retention Icon">
     <img src="https://cdn-icons-png.flaticon.com/512/9119/9119160.png" class="icon icon-3" alt="Service Icon">
 
     <div class="container">
         <h1>إدارة الزبائن</h1>
-        <button id="addCustomerBtn"><i class="fas fa-user-plus"></i> إضافة زبون جديد</button>
+        <button id="addCustomerBtn"><i class="fas fa-user-plus"></i> إدخال زبون جديد</button>
         <button id="viewCustomersBtn"><i class="fas fa-list"></i> اختيار زبون من القائمة</button>
-        <ul id="customerList"></ul>
     </div>
 
     <div id="addCustomerModal">
         <div class="modal-content">
-            <span id="closeModal" style="cursor:pointer">&times;</span>
-            <h2>إضافة زبون جديد</h2>
+            <h2>إدخال زبون جديد</h2>
             <input type="text" id="customerName" placeholder="إسم الزبون" />
             <button onclick="addCustomer()">حفظ</button>
         </div>
     </div>
 
     <script>
-        document.getElementById('addCustomerBtn').addEventListener('click', function() {
-            document.getElementById('addCustomerModal').style.display = 'block';
-        });
+        const addCustomerBtn = document.getElementById('addCustomerBtn');
+        const addCustomerModal = document.getElementById('addCustomerModal');
 
-        document.getElementById('closeModal').addEventListener('click', function() {
-            document.getElementById('addCustomerModal').style.display = 'none';
+        addCustomerBtn.addEventListener('click', () => {
+            addCustomerModal.style.display = 'flex';
         });
 
         window.onclick = function(event) {
-            if (event.target == document.getElementById('addCustomerModal')) {
-                document.getElementById('addCustomerModal').style.display = 'none';
+            if (event.target == addCustomerModal) {
+                addCustomerModal.style.display = 'none';
             }
-        }
+        };
 
         function addCustomer() {
             const customerName = document.getElementById('customerName').value;
-            if (customerName) {
+            if (customerName.trim()) {
                 let customers = JSON.parse(localStorage.getItem('customers')) || [];
-                customers.push({ name: customerName });
+                customers.push(customerName);
                 localStorage.setItem('customers', JSON.stringify(customers));
+                alert("تمت إضافة الزبون بنجاح!");
                 document.getElementById('customerName').value = '';
-                document.getElementById('addCustomerModal').style.display = 'none';
-                loadCustomers();
+                addCustomerModal.style.display = 'none';
+            } else {
+                alert("يرجى إدخال اسم الزبون!");
             }
-        }
-
-        function loadCustomers() {
-            const customerList = document.getElementById('customerList');
-            customerList.innerHTML = '';
-            const customers = JSON.parse(localStorage.getItem('customers')) || [];
-            customers.forEach((customer, index) => {
-                const li = document.createElement('li');
-                li.textContent = customer.name;
-                const deleteButton = document.createElement('button');
-                deleteButton.textContent = 'حذف';
-                deleteButton.onclick = () => deleteCustomer(index);
-                const selectButton = document.createElement('button');
-                selectButton.textContent = 'اختيار';
-                selectButton.onclick = () => selectCustomer(index);
-                li.appendChild(deleteButton);
-                li.appendChild(selectButton);
-                customerList.appendChild(li);
-            });
-        }
-
-        function deleteCustomer(index) {
-            let customers = JSON.parse(localStorage.getItem('customers'));
-            customers.splice(index, 1);
-            localStorage.setItem('customers', JSON.stringify(customers));
-            loadCustomers();
-        }
-
-        function selectCustomer(index) {
-            localStorage.setItem('selectedCustomer', index);
-            window.location.href = 'categories.html'; // رابط الصفحة التالية
         }
     </script>
 
