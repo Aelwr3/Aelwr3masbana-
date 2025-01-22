@@ -1,169 +1,189 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اختيار الفئات</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
-        body {
-            margin: 0;
-            font-family: 'Amiri', serif;
-            background: linear-gradient(135deg, #002b4d, #004c6d);
-            color: white;
-            text-align: center;
-            position: relative;
-            overflow-x: hidden;
-            height: 100vh;
-        }
-        h1 {
-            margin-top: 20px;
-            font-size: 2.5rem;
-        }
-        .categories-button {
-            margin: 30px auto;
-            background-color: #00bcd4;
-            color: white;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: 0.3s;
-            display: inline-block;
-        }
-        .categories-button:hover {
-            background-color: #019aa8;
-            transform: scale(1.05);
-        }
-        .categories-container {
-            display: none;
-            margin: 20px auto;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-        }
-        .category {
-            background-color: #2196f3;
-            color: white;
-            padding: 15px 20px;
-            font-size: 1rem;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .category:hover {
-            background-color: #1976d2;
-            transform: scale(1.05);
-        }
-        .close-btn {
-            background-color: #f44336;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            margin: 20px auto;
-            display: block;
-            transition: 0.3s;
-        }
-        .close-btn:hover {
-            background-color: #d32f2f;
-        }
-        .selected-items {
-            margin-top: 20px;
-            background-color: rgba(255, 255, 255, 0.2);
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .item {
-            margin: 10px 0;
-        }
-        .confirm-btn {
-            margin-top: 20px;
-            background-color: #4caf50;
-            color: white;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .confirm-btn:hover {
-            background-color: #388e3c;
-            transform: scale(1.05);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>اختيار الملابس</title>
+  <style>
+    body {
+      font-family: 'Amiri', serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #002b4d, #004c6d);
+      color: white;
+      text-align: center;
+    }
+    h1 {
+      margin: 20px 0;
+    }
+    #categoryButton {
+      background-color: #008cba;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    #categoryButton:hover {
+      background-color: #005f7a;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #f9f9f9;
+      color: black;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+    }
+    .modal button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      background-color: #ff5e57;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .category-buttons {
+      margin: 20px 0;
+    }
+    .category-buttons button {
+      background-color: #008cba;
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      margin: 5px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .category-buttons button:hover {
+      background-color: #005f7a;
+    }
+    #selectedItems {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+    #selectedItems ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    #selectedItems li {
+      margin: 5px 0;
+    }
+    #confirmButton {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    #confirmButton:hover {
+      background-color: #1e7e34;
+    }
+  </style>
 </head>
 <body>
-    <h1>مرحبا، اسم الزبون</h1>
-    <button class="categories-button" onclick="showCategories()">عرض الفئات</button>
-    <div class="categories-container" id="categoriesContainer">
-        <button class="category" onclick="showItems('رجال')">رجال</button>
-        <button class="category" onclick="showItems('نساء')">نساء</button>
-        <button class="category" onclick="showItems('أطفال')">أطفال</button>
-        <button class="category" onclick="showItems('أفرشة')">أفرشة</button>
-        <button class="close-btn" onclick="closeCategories()">× إغلاق</button>
+  <h1 id="customerName">مرحباً، اسم الزبون</h1>
+  <button id="categoryButton">عرض الفئات</button>
+  <div id="categoriesModal" class="modal">
+    <h2>اختر الفئة</h2>
+    <div class="category-buttons">
+      <button data-category="رجال">رجال</button>
+      <button data-category="نساء">نساء</button>
+      <button data-category="أطفال">أطفال</button>
+      <button data-category="أفرشة">أفرشة</button>
     </div>
-    <div class="selected-items" id="selectedItemsContainer">
-        <h2>الملابس المختارة:</h2>
-        <div id="itemsList"></div>
-        <button class="confirm-btn" onclick="confirmSelection()">تأكيد</button>
+    <button id="closeModal">إغلاق</button>
+  </div>
+  <div id="itemsModal" class="modal">
+    <h2>ملابس مختارة:</h2>
+    <div class="category-buttons" id="itemsContainer">
+      <!-- سيتم إضافة الأزرار هنا ديناميكياً -->
     </div>
+    <button id="closeItemsModal">إغلاق</button>
+  </div>
+  <div id="selectedItems">
+    <h3>الملابس المختارة:</h3>
+    <ul id="itemsList">
+      <!-- قائمة الملابس المختارة -->
+    </ul>
+    <button id="confirmButton">تأكيد</button>
+  </div>
 
-    <script>
-        const selectedItems = [];
+  <script>
+    // عرض اسم الزبون
+    const customerName = localStorage.getItem('selectedCustomer') || "الزبون";
+    document.getElementById('customerName').textContent = `مرحباً، ${customerName}`;
 
-        function showCategories() {
-            document.getElementById('categoriesContainer').style.display = 'flex';
-        }
+    const categoryButton = document.getElementById('categoryButton');
+    const categoriesModal = document.getElementById('categoriesModal');
+    const itemsModal = document.getElementById('itemsModal');
+    const closeModal = document.getElementById('closeModal');
+    const closeItemsModal = document.getElementById('closeItemsModal');
+    const itemsContainer = document.getElementById('itemsContainer');
+    const itemsList = document.getElementById('itemsList');
+    const confirmButton = document.getElementById('confirmButton');
 
-        function closeCategories() {
-            document.getElementById('categoriesContainer').style.display = 'none';
-        }
+    const categories = {
+      رجال: ['قميص', 'بنطلون', 'جاكيت'],
+      نساء: ['فستان', 'عباية', 'طرحة'],
+      أطفال: ['تيشيرت', 'شورت', 'بيجاما'],
+      أفرشة: ['بطانية', 'ملاءة', 'مخدة']
+    };
 
-        function showItems(category) {
-            const items = {
-                "رجال": ["قميص", "بنطال", "سترة"],
-                "نساء": ["فستان", "بلوزة", "تنورة"],
-                "أطفال": ["تيشيرت", "شورت", "جاكيت"],
-                "أفرشة": ["غطاء", "وسادة", "بطانية"]
-            };
-            const itemList = document.getElementById('itemsList');
-            itemList.innerHTML = ''; // Clear previous items
-            items[category].forEach(item => {
-                const itemElement = document.createElement('div');
-                itemElement.classList.add('item');
-                itemElement.textContent = item;
-                const selectButton = document.createElement('button');
-                selectButton.textContent = 'اختيار';
-                selectButton.classList.add('category');
-                selectButton.onclick = () => addItem(item);
-                itemElement.appendChild(selectButton);
-                itemList.appendChild(itemElement);
-            });
-        }
+    const selectedItems = [];
 
-        function addItem(item) {
-            selectedItems.push(item);
-            const selectedItemsContainer = document.getElementById('selectedItemsContainer');
-            selectedItemsContainer.style.display = 'block';
-            const itemsList = document.getElementById('itemsList');
-            const newItem = document.createElement('div');
-            newItem.textContent = item;
-            newItem.classList.add('item');
-            itemsList.appendChild(newItem);
-        }
+    categoryButton.addEventListener('click', () => {
+      categoriesModal.style.display = 'block';
+    });
 
-        function confirmSelection() {
-            localStorage.setItem('selectedItems', JSON.stringify(selectedItems));
-            window.location.href = 'next_page.html'; // Replace with your next page URL
-        }
-    </script>
+    closeModal.addEventListener('click', () => {
+      categoriesModal.style.display = 'none';
+    });
+
+    closeItemsModal.addEventListener('click', () => {
+      itemsModal.style.display = 'none';
+    });
+
+    document.querySelectorAll('[data-category]').forEach(button => {
+      button.addEventListener('click', () => {
+        const category = button.getAttribute('data-category');
+        itemsContainer.innerHTML = '';
+        categories[category].forEach(item => {
+          const itemButton = document.createElement('button');
+          itemButton.textContent = item;
+          itemButton.addEventListener('click', () => {
+            if (!selectedItems.includes(item)) {
+              selectedItems.push(item);
+              const listItem = document.createElement('li');
+              listItem.textContent = item;
+              itemsList.appendChild(listItem);
+            }
+          });
+          itemsContainer.appendChild(itemButton);
+        });
+        categoriesModal.style.display = 'none';
+        itemsModal.style.display = 'block';
+      });
+    });
+
+    confirmButton.addEventListener('click', () => {
+      localStorage.setItem('selectedItems', JSON.stringify(selectedItems));
+      window.location.href = 'nextPage.html'; // رابط الصفحة التالية
+    });
+  </script>
 </body>
 </html>
