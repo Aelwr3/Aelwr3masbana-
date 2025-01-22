@@ -198,6 +198,249 @@
       const customers = JSON.parse(localStorage.getItem("customers")) || [];
       const newName = prompt("أدخل الاسم الجديد:", customers[index]);
       if (newName) {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إدارة الزبائن</title>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: "Amiri", serif;
+      background: linear-gradient(to bottom, #002b4d, #004c6d);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .button {
+      background-color: #006994;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .button:hover {
+      background-color: #004c6d;
+    }
+
+    .popup, .customer-list, .modal {
+      background-color: #ffffff11;
+      border: 1px solid #006994;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 20px;
+      width: 80%;
+      max-width: 400px;
+      color: white;
+    }
+
+    .popup input, .customer-list button {
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      border: 1px solid #006994;
+      border-radius: 8px;
+      background-color: #004c6d;
+      color: white;
+    }
+
+    .customer-list {
+      display: none;
+    }
+
+    .customer-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #ffffff22;
+      border-radius: 8px;
+    }
+
+    .customer-item button {
+      margin-left: 5px;
+      padding: 5px 10px;
+    }
+
+    /* أيقونات الخلفية */
+    .icon {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      opacity: 0.1;
+      animation: float 6s infinite ease-in-out;
+    }
+
+    .icon:nth-child(1) {
+      top: 5%;
+      left: 10%;
+      animation-delay: 0s;
+    }
+
+    .icon:nth-child(2) {
+      top: 50%;
+      right: 15%;
+      animation-delay: 2s;
+    }
+
+    .icon:nth-child(3) {
+      bottom: 20%;
+      left: 20%;
+      animation-delay: 4s;
+    }
+
+    .icon:nth-child(4) {
+      bottom: 5%;
+      right: 25%;
+      animation-delay: 6s;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-15px);
+      }
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #004c6d;
+      border: 1px solid #006994;
+      border-radius: 15px;
+      padding: 20px;
+      width: 80%;
+      max-width: 400px;
+      color: white;
+      z-index: 10;
+      text-align: center;
+    }
+
+    .modal.active {
+      display: block;
+    }
+
+    .modal button {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>إدارة الزبائن</h1>
+  <button class="button" onclick="openPopup()">إضافة زبون جديد</button>
+  <button class="button" onclick="showCustomers()">عرض الزبائن المسجلين</button>
+
+  <!-- Popup لإضافة زبون جديد -->
+  <div id="popup" class="popup" style="display: none;">
+    <h3>إضافة زبون جديد</h3>
+    <input type="text" id="customerName" placeholder="اسم الزبون">
+    <button onclick="addCustomer()">إضافة</button>
+    <button onclick="closePopup()">إلغاء</button>
+  </div>
+
+  <!-- قائمة الزبائن -->
+  <div id="customerList" class="customer-list"></div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <p id="modalMessage"></p>
+    <button onclick="closeModal()">موافق</button>
+  </div>
+
+  <!-- أيقونات الخلفية -->
+  <img src="https://cdn-icons-png.flaticon.com/512/3322/3322056.png" class="icon" alt="Laundry Machine">
+  <img src="https://cdn-icons-png.flaticon.com/512/2975/2975175.png" class="icon" alt="Laundry">
+  <img src="https://cdn-icons-png.flaticon.com/512/1748/1748971.png" class="icon" alt="Detergent">
+  <img src="https://cdn-icons-png.flaticon.com/512/3440/3440626.png" class="icon" alt="Basket">
+
+  <script>
+    const customerListDiv = document.getElementById("customerList");
+    const modal = document.getElementById("modal");
+    const modalMessage = document.getElementById("modalMessage");
+
+    function openPopup() {
+      document.getElementById("popup").style.display = "block";
+    }
+
+    function closePopup() {
+      document.getElementById("popup").style.display = "none";
+    }
+
+    function showModal(message) {
+      modalMessage.innerText = message;
+      modal.classList.add("active");
+    }
+
+    function closeModal() {
+      modal.classList.remove("active");
+    }
+
+    function addCustomer() {
+      const nameInput = document.getElementById("customerName");
+      const name = nameInput.value.trim();
+      if (!name) {
+        showModal("يرجى إدخال اسم الزبون!");
+        return;
+      }
+
+      let customers = JSON.parse(localStorage.getItem("customers")) || [];
+      customers.push(name);
+      localStorage.setItem("customers", JSON.stringify(customers));
+      nameInput.value = "";
+      closePopup();
+      showModal("تمت إضافة الزبون بنجاح!");
+    }
+
+    function showCustomers() {
+      const customers = JSON.parse(localStorage.getItem("customers")) || [];
+      customerListDiv.innerHTML = customers.length
+        ? customers
+            .map(
+              (customer, index) => `
+        <div class="customer-item">
+          <span>${customer}</span>
+          <div>
+            <button onclick="editCustomer(${index})">تعديل</button>
+            <button onclick="deleteCustomer(${index})">حذف</button>
+            <button onclick="selectCustomer('${customer}')">اختيار</button>
+          </div>
+        </div>
+      `
+            )
+            .join("")
+        : "<p>لا توجد زبائن مسجلين.</p>";
+
+      customerListDiv.style.display = "block";
+    }
+
+    function editCustomer(index) {
+      const customers = JSON.parse(localStorage.getItem("customers")) || [];
+      const newName = prompt("أدخل الاسم الجديد:", customers[index]);
+      if (newName) {
         customers[index] = newName;
         localStorage.setItem("customers", JSON.stringify(customers));
         showCustomers();
@@ -215,7 +458,7 @@
 
     function selectCustomer(name) {
       localStorage.setItem("selectedCustomer", name);
-      alert(`تم اختيار الزبون: ${name}`);
+      showModal(`تم اختيار الزبون: ${name}`);
     }
   </script>
 </body>
