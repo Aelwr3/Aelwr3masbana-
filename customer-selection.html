@@ -4,35 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مصبنة مشاء الله - إدارة الزبائن</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+        /* إضافة الأيقونات الخلفية */
         body {
             direction: rtl;
-            font-family: 'Tajawal', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
+            font-family: 'Amiri', serif;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background-image: url('https://image.flaticon.com/icons/svg/3322/3322056.svg'), url('https://image.flaticon.com/icons/svg/2975/2975175.svg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: top left, top right;
             color: #ffffff;
+            padding: 20px;
         }
+
+        /* التنسيق العام للصندوق */
         .container {
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
             padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             border-radius: 15px;
             text-align: center;
             width: 100%;
             max-width: 500px;
         }
+
         h1 {
             font-weight: 700;
             color: #ffffff;
             margin-bottom: 20px;
             letter-spacing: 1.2px;
         }
+
+        /* تنسيق الأزرار */
         button {
             padding: 15px 25px;
             font-size: 1.2rem;
@@ -44,15 +50,19 @@
             margin: 10px;
             transition: background-color 0.3s, box-shadow 0.3s;
         }
+
         button:hover {
             background-color: #0a96b4;
             box-shadow: 0 0 15px rgba(13, 184, 222, 0.7);
         }
+
+        /* تنسيق قائمة الزبائن */
         .customer-list {
             list-style: none;
             padding: 0;
             margin-top: 20px;
         }
+
         .customer-list li {
             background: rgba(255, 255, 255, 0.2);
             margin: 10px 0;
@@ -62,14 +72,18 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .customer-list button {
             background-color: #f44336;
             font-size: 1rem;
             margin-left: 10px;
         }
+
         .customer-list button:hover {
             background-color: #d32f2f;
         }
+
+        /* نمط النافذة المنبثقة */
         #addCustomerModal {
             display: none;
             position: fixed;
@@ -81,6 +95,7 @@
             overflow: auto;
             background-color: rgba(0,0,0,0.4);
         }
+
         .modal-content {
             background-color: #fefefe;
             margin: 15% auto;
@@ -90,6 +105,7 @@
             max-width: 300px;
             border-radius: 5px;
         }
+
         .modal-content input {
             width: 100%;
             padding: 10px;
@@ -97,6 +113,7 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+
         .modal-content button {
             width: 100%;
             padding: 10px;
@@ -104,6 +121,8 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            background-color: #10b981;
+            color: #fff;
         }
     </style>
 </head>
@@ -115,6 +134,7 @@
         <ul class="customer-list" id="customerList"></ul>
     </div>
 
+    <!-- نافذة منبثقة لإضافة زبون جديد -->
     <div id="addCustomerModal">
         <div class="modal-content">
             <span id="closeModal" style="cursor:pointer">&times;</span>
