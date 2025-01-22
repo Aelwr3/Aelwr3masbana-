@@ -1,31 +1,204 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>إدارة الزبائن</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مصبنة مشاء الله - إدارة الزبائن</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+        body {
+            direction: rtl;
+            font-family: 'Tajawal', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #ffffff;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(15px);
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+        h1 {
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 20px;
+            letter-spacing: 1.2px;
+        }
+        button {
+            padding: 15px 25px;
+            font-size: 1.2rem;
+            background-color: #10b981;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        button:hover {
+            background-color: #0a96b4;
+            box-shadow: 0 0 15px rgba(13, 184, 222, 0.7);
+        }
+        .customer-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        .customer-list li {
+            background: rgba(255, 255, 255, 0.2);
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .customer-list button {
+            background-color: #f44336;
+            font-size: 1rem;
+            margin-left: 10px;
+        }
+        .customer-list button:hover {
+            background-color: #d32f2f;
+        }
+        #addCustomerModal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 300px;
+            border-radius: 5px;
+        }
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .modal-content button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-  <div class="background">
-    <div class="content">
-      <h1>إدارة الزبائن</h1>
-      <button id="addCustomerBtn" class="btn">إضافة زبون جديد</button>
-      <div id="customerList" class="customer-list"></div>
+    <div class="container">
+        <h1>إدارة الزبائن</h1>
+        <button id="addCustomerBtn">إضافة زبون جديد</button>
+        <button id="viewCustomersBtn">عرض الزبائن المسجلين</button>
+        <ul class="customer-list" id="customerList"></ul>
     </div>
-  </div>
 
-  <!-- نافذة منبثقة لإضافة زبون -->
-  <div id="addCustomerModal" class="modal hidden">
-    <div class="modal-content">
-      <span id="closeModal" class="close">&times;</span>
-      <h2>إضافة زبون جديد</h2>
-      <input id="customerNameInput" type="text" placeholder="أدخل اسم الزبون">
-      <p id="errorMessage" class="error hidden">يرجى إدخال اسم الزبون</p>
-      <button id="saveCustomerBtn" class="btn">حفظ</button>
+    <div id="addCustomerModal">
+        <div class="modal-content">
+            <span id="closeModal" style="cursor:pointer">&times;</span>
+            <h2>إضافة زبون جديد</h2>
+            <input type="text" id="customerName" placeholder="إسم الزبون">
+            <button onclick="addCustomer()">إضافة</button>
+        </div>
     </div>
-  </div>
 
-  <script src="script.js"></script>
+    <script>
+        document.getElementById('addCustomerBtn').addEventListener('click', function() {
+            document.getElementById('addCustomerModal').style.display = 'block';
+        });
+
+        document.getElementById('closeModal').addEventListener('click', function() {
+            document.getElementById('addCustomerModal').style.display = 'none';
+        });
+
+        document.getElementById('viewCustomersBtn').addEventListener('click', function() {
+            loadCustomers();
+        });
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('addCustomerModal')) {
+                document.getElementById('addCustomerModal').style.display = 'none';
+            }
+        }
+
+        function addCustomer() {
+            const customerName = document.getElementById('customerName').value;
+            if (customerName) {
+                let customers = JSON.parse(localStorage.getItem('customers')) || [];
+                customers.push({ name: customerName });
+                localStorage.setItem('customers', JSON.stringify(customers));
+                document.getElementById('customerName').value = '';
+                document.getElementById('addCustomerModal').style.display = 'none';
+                loadCustomers();
+            }
+        }
+
+        function loadCustomers() {
+            const customerList = document.getElementById('customerList');
+            customerList.innerHTML = '';
+            const customers = JSON.parse(localStorage.getItem('customers')) || [];
+            customers.forEach((customer, index) => {
+                const li = document.createElement('li');
+                li.textContent = customer.name;
+                const editButton = document.createElement('button');
+                editButton.textContent = 'تعديل';
+                editButton.onclick = () => editCustomer(index);
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'حذف';
+                deleteButton.onclick = () => deleteCustomer(index);
+                const selectButton = document.createElement('button');
+                selectButton.textContent = 'اختيار';
+                selectButton.onclick = () => selectCustomer(index);
+                li.appendChild(editButton);
+                li.appendChild(deleteButton);
+                li.appendChild(selectButton);
+                customerList.appendChild(li);
+            });
+        }
+
+        function editCustomer(index) {
+            const newName = prompt('أدخل إسم جديد للزبون:');
+            if (newName) {
+                let customers = JSON.parse(localStorage.getItem('customers'));
+                customers[index].name = newName;
+                localStorage.setItem('customers', JSON.stringify(customers));
+                loadCustomers();
+            }
+        }
+
+        function deleteCustomer(index) {
+            let customers = JSON.parse(localStorage.getItem('customers'));
+            customers.splice(index, 1);
+            localStorage.setItem('customers', JSON.stringify(customers));
+            loadCustomers();
+        }
+
+        function selectCustomer(index) {
+            localStorage.setItem('selectedCustomer', index);
+            window.location.href = 'categories.html'; // رابط الصفحة التالية
+        }
+    </script>
 </body>
 </html>
