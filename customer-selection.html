@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,7 +42,7 @@
       transform: scale(1.05);
     }
 
-    .popup, .customer-list, .modal {
+    .customer-list, .modal {
       background-color: #ffffff11;
       border: 1px solid #005f88;
       border-radius: 15px;
@@ -53,19 +53,8 @@
       color: white;
     }
 
-    .popup input, .customer-list button {
-      margin: 10px 0;
-      padding: 10px;
-      width: 100%;
-      border: 1px solid #005f88;
-      border-radius: 8px;
-      background-color: #003c5e;
-      color: white;
-    }
-
     .customer-list {
       display: none;
-      width: 100%;
     }
 
     .customer-card {
@@ -90,6 +79,7 @@
       padding: 5px 10px;
       border-radius: 8px;
       cursor: pointer;
+      margin-left: 5px;
     }
 
     .customer-card button:hover {
@@ -112,9 +102,14 @@
       z-index: 1000;
     }
 
-    .modal h2 {
-      font-size: 1.5rem;
-      margin-bottom: 15px;
+    .modal input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #005f88;
+      border-radius: 8px;
+      background-color: #ffffff11;
+      color: white;
     }
 
     .modal button {
@@ -145,29 +140,44 @@
 </head>
 <body>
   <h1>إدارة الزبائن</h1>
-  <button class="button" onclick="addCustomer()">إضافة زبون جديد</button>
+  <button class="button" onclick="openAddModal()">إضافة زبون جديد</button>
   <button class="button" onclick="showCustomers()">عرض الزبائن</button>
 
   <div class="customer-list" id="customerList"></div>
 
-  <div class="modal" id="alertModal">
-    <h2>رسالة تنبيه</h2>
-    <p>يرجى إدخال بيانات صحيحة!</p>
-    <button onclick="closeModal()">حسناً</button>
+  <div class="modal" id="addCustomerModal">
+    <h2>إضافة زبون جديد</h2>
+    <input type="text" id="newCustomerName" placeholder="أدخل اسم الزبون">
+    <button onclick="addCustomer()">إضافة</button>
+    <button onclick="closeModal()">إلغاء</button>
   </div>
+
   <div class="overlay" id="overlay"></div>
 
   <script>
     let customers = JSON.parse(localStorage.getItem('customers')) || [];
 
+    function openAddModal() {
+      document.getElementById('addCustomerModal').style.display = 'block';
+      document.getElementById('overlay').style.display = 'block';
+    }
+
+    function closeModal() {
+      document.getElementById('addCustomerModal').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
+    }
+
     function addCustomer() {
-      const name = prompt('أدخل اسم الزبون:');
+      const nameInput = document.getElementById('newCustomerName');
+      const name = nameInput.value.trim();
       if (!name) {
-        showModal('يرجى إدخال اسم صحيح!');
+        alert('يرجى إدخال اسم صحيح!');
         return;
       }
       customers.push(name);
       localStorage.setItem('customers', JSON.stringify(customers));
+      nameInput.value = '';
+      closeModal();
       alert('تم إضافة الزبون بنجاح!');
     }
 
@@ -182,6 +192,7 @@
           <div>
             <button onclick="editCustomer(${index})">تعديل</button>
             <button onclick="deleteCustomer(${index})">حذف</button>
+            <button onclick="selectCustomer(${index})">اختيار</button>
           </div>
         `;
         list.appendChild(card);
@@ -192,10 +203,9 @@
     function editCustomer(index) {
       const newName = prompt('أدخل الاسم الجديد:', customers[index]);
       if (newName) {
-        customers[index] = newName;
+        customers[index] = newName.trim();
         localStorage.setItem('customers', JSON.stringify(customers));
         showCustomers();
-        alert('تم تعديل الاسم بنجاح!');
       }
     }
 
@@ -207,19 +217,10 @@
       }
     }
 
-    function showModal(message) {
-      const modal = document.getElementById('alertModal');
-      const overlay = document.getElementById('overlay');
-      modal.querySelector('p').textContent = message;
-      modal.style.display = 'block';
-      overlay.style.display = 'block';
-    }
-
-    function closeModal() {
-      const modal = document.getElementById('alertModal');
-      const overlay = document.getElementById('overlay');
-      modal.style.display = 'none';
-      overlay.style.display = 'none';
+    function selectCustomer(index) {
+      const selectedCustomer = customers[index];
+      localStorage.setItem('selectedCustomer', selectedCustomer);
+      window.location.href = 'categories.html'; // تعديل الرابط بناءً على صفحة الفئات
     }
   </script>
 </body>
