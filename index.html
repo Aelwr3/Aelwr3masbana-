@@ -18,6 +18,7 @@
       justify-content: center;
       align-items: center;
       overflow: hidden;
+      position: relative;
     }
 
     /* تصميم الحاوية */
@@ -29,6 +30,7 @@
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
       text-align: center;
       animation: slideIn 1.2s ease-in-out;
+      z-index: 2;
     }
 
     h1 {
@@ -81,38 +83,52 @@
       background: #004a73;
     }
 
-    /* التصميم المنبثق */
-    .popup {
-      display: none;
-      position: fixed;
+    /* الأيقونات في الخلفية */
+    .icon {
+      position: absolute;
+      opacity: 0.1;
+      width: 120px;
+      height: 120px;
+      z-index: 1;
+    }
+
+    .icon1 {
+      top: 10%;
+      left: 5%;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .icon2 {
+      top: 25%;
+      right: 10%;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .icon3 {
+      bottom: 20%;
+      left: 15%;
+      animation: float 7s ease-in-out infinite;
+    }
+
+    .icon4 {
+      bottom: 10%;
+      right: 5%;
+      animation: float 5s ease-in-out infinite;
+    }
+
+    .icon5 {
       top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #004c6d;
-      color: #e0f7fa;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-      text-align: center;
-      z-index: 10;
+      left: 40%;
+      animation: float 6.5s ease-in-out infinite;
     }
 
-    .popup h2 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-
-    .popup button {
-      margin-top: 20px;
-    }
-
-    /* رسالة الخطأ */
-    .error {
-      color: #ff6161;
-      margin-top: 10px;
-      font-size: 16px;
-      display: none;
-      animation: fadeIn 0.5s ease-in-out;
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
     }
 
     @keyframes slideIn {
@@ -137,6 +153,12 @@
   </style>
 </head>
 <body>
+  <img src="https://cdn-icons-png.flaticon.com/512/3322/3322056.png" alt="Laundry Machine" class="icon icon1">
+  <img src="https://cdn-icons-png.flaticon.com/512/2975/2975175.png" alt="Laundry" class="icon icon2">
+  <img src="https://cdn-icons-png.flaticon.com/512/1748/1748971.png" alt="Detergent" class="icon icon3">
+  <img src="https://cdn-icons-png.flaticon.com/512/3440/3440626.png" alt="Laundry Basket" class="icon icon4">
+  <img src="https://cdn-icons-png.flaticon.com/512/4079/4079304.png" alt="Iron" class="icon icon5">
+
   <div class="container">
     <h1>مرحبًا بكم في مصبنة مشاء الله</h1>
     <p>يرجى إدخال الكود للمتابعة</p>
@@ -145,35 +167,21 @@
     <p class="error" id="errorMessage">❌ الكود غير صحيح! حاول مرة أخرى.</p>
   </div>
 
-  <div class="popup" id="popup">
-    <h2>✅ الكود صحيح!</h2>
-    <p>جاري التوجيه إلى الصفحة التالية...</p>
-    <button onclick="closePopup()">حسنًا</button>
-  </div>
-
   <script>
     const correctCode = "202501";
     const confirmButton = document.getElementById('confirmButton');
     const codeInput = document.getElementById('codeInput');
-    const popup = document.getElementById('popup');
     const errorMessage = document.getElementById('errorMessage');
 
     confirmButton.addEventListener('click', () => {
       if (codeInput.value === correctCode) {
         errorMessage.style.display = 'none'; // إخفاء رسالة الخطأ إذا كانت ظاهرة
-        popup.style.display = 'block';
-        setTimeout(() => {
-          localStorage.setItem('accessGranted', true);
-          window.location.href = "customer-selection.html";
-        }, 2000);
+        alert('✅ الكود صحيح! يتم الآن التوجيه...');
+        window.location.href = "customer-selection.html";
       } else {
         errorMessage.style.display = 'block'; // إظهار رسالة الخطأ
       }
     });
-
-    function closePopup() {
-      popup.style.display = 'none';
-    }
   </script>
 </body>
 </html>
