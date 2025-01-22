@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تعديل الفاتورة</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Amiri', serif;
+      background: linear-gradient(135deg, #002b4d, #004c6d);
+      overflow: hidden;
+      color: #fff;
+      text-align: center;
+    }
+
+    .floating-icons {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .floating-icons img {
+      position: absolute;
+      width: 80px;
+      animation: float 8s infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0); }
+    }
+
+    .container {
+      margin-top: 50px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+    }
+
+    .table-container {
+      margin: 20px auto;
+      max-width: 800px;
+      background-color: rgba(0, 43, 77, 0.8);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table th, table td {
+      padding: 15px;
+      text-align: center;
+      border: 1px solid #fff;
+      color: #fff;
+    }
+
+    table th {
+      background-color: #004c6d;
+    }
+
+    table input {
+      width: 80%;
+      padding: 5px;
+      font-size: 1em;
+    }
+
+    .btn {
+      display: inline-block;
+      margin: 20px;
+      padding: 10px 20px;
+      background-color: #004c6d;
+      color: #fff;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #0077a3;
+    }
+
+    .confirm-btn {
+      background-color: #008f39;
+    }
+
+    .confirm-btn:hover {
+      background-color: #00b94e;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="floating-icons">
+    <img src="https://www.flaticon.com/svg/static/icons/svg/5455/5455723.svg" style="top: 10%; left: 20%;">
+    <img src="https://www.flaticon.com/svg/static/icons/svg/18653/18653528.svg" style="top: 40%; left: 70%;">
+    <img src="https://www.flaticon.com/svg/static/icons/svg/9119/9119160.svg" style="top: 70%; left: 30%;">
+  </div>
+
+  <div class="container">
+    <h1>تعديل الفاتورة</h1>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>اسم العينة</th>
+            <th>عدد القطع</th>
+            <th>الثمن</th>
+            <th>المجموع</th>
+          </tr>
+        </thead>
+        <tbody id="invoiceTable">
+          <!-- البيانات سيتم إضافتها هنا -->
+        </tbody>
+      </table>
+    </div>
+    <button class="btn confirm-btn" id="confirmInvoice">تأكيد</button>
+  </div>
+
+  <script>
+    // جلب بيانات الفاتورة من LocalStorage
+    const invoiceData = JSON.parse(localStorage.getItem("selectedItems")) || [];
+    const tableBody = document.getElementById("invoiceTable");
+
+    // عرض البيانات في الجدول
+    function populateTable() {
+      tableBody.innerHTML = "";
+      invoiceData.forEach((item, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.name}</td>
+          <td><input type="number" value="${item.quantity}" min="1" data-index="${index}" class="quantity-input"></td>
+          <td><input type="number" value="${item.price}" min="0" data-index="${index}" class="price-input"></td>
+          <td>${(item.quantity * item.price).toFixed(2)} DH</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // تحديث بيانات الفاتورة عند تغيير القيم
+    document.addEventListener("input", (event) => {
+      const index = event.target.getAttribute("data-index");
+      if (event.target.classList.contains("quantity-input")) {
+        invoiceData[index].quantity = +event.target.value;
+      } else if (event.target.classList.contains("price-input")) {
+        invoiceData[index].price = +event.target.value;
+      }
+      localStorage.setItem("selectedItems", JSON.stringify(invoiceData));
+      populateTable();
+    });
+
+    // تأكيد الفاتورة
+    document.getElementById("confirmInvoice").addEventListener("click", () => {
+      alert("تم تأكيد الفاتورة بنجاح!"); // يمكن تحسين الرسالة لاحقاً
+      // الانتقال للصفحة التالية
+      window.location.href = "next-page.html"; // استبدل "next-page.html" برابط الصفحة التالية
+    });
+
+    // تهيئة الجدول عند تحميل الصفحة
+    populateTable();
+  </script>
+</body>
+</html>
