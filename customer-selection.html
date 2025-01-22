@@ -19,6 +19,33 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            position: relative;
+        }
+
+        /* إضافة الأيقونات المتحركة في الخلفية */
+        .icon-background {
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            z-index: -1;
+            pointer-events: none;
+            animation: moveIcons 15s linear infinite;
+        }
+
+        .icon-background i {
+            font-size: 80px;
+            color: rgba(255, 255, 255, 0.3);
+            margin: 10px;
+            animation: moveIcons 10s infinite;
+        }
+
+        @keyframes moveIcons {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(500px, 500px);
+            }
         }
 
         .container {
@@ -45,12 +72,13 @@
             border: none;
             border-radius: 8px;
             margin: 10px;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             transition: background-color 0.3s, box-shadow 0.3s;
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            font-family: 'Amiri', serif; /* تحسين الخط للأزرار */
         }
 
         button:hover {
@@ -132,6 +160,14 @@
     </style>
 </head>
 <body>
+
+    <!-- إضافة الأيقونات المتحركة في الخلفية -->
+    <div class="icon-background">
+        <i class="fas fa-tshirt"></i>
+        <i class="fas fa-basketball-ball"></i>
+        <i class="fas fa-cogs"></i>
+        <i class="fas fa-shipping-fast"></i>
+    </div>
 
     <div class="container">
         <h1>إدارة الزبائن</h1>
