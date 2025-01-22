@@ -101,9 +101,9 @@
 </head>
 <body>
   <div class="floating-icons">
-    <img src="https://www.flaticon.com/svg/static/icons/svg/5455/5455723.svg" style="top: 10%; left: 20%;">
-    <img src="https://www.flaticon.com/svg/static/icons/svg/18653/18653528.svg" style="top: 40%; left: 70%;">
-    <img src="https://www.flaticon.com/svg/static/icons/svg/9119/9119160.svg" style="top: 70%; left: 30%;">
+    <img src="https://cdn-icons-png.flaticon.com/512/5455/5455723.png" style="top: 10%; left: 20%;">
+    <img src="https://cdn-icons-png.flaticon.com/512/18653/18653528.png" style="top: 40%; left: 70%;">
+    <img src="https://cdn-icons-png.flaticon.com/512/9119/9119160.png" style="top: 70%; left: 30%;">
   </div>
 
   <div class="container">
@@ -160,9 +160,23 @@
 
     // تأكيد الفاتورة
     document.getElementById("confirmInvoice").addEventListener("click", () => {
-      alert("تم تأكيد الفاتورة بنجاح!"); // يمكن تحسين الرسالة لاحقاً
-      // الانتقال للصفحة التالية
-      window.location.href = "next-page.html"; // استبدل "next-page.html" برابط الصفحة التالية
+      const confirmationMessage = document.createElement("div");
+      confirmationMessage.style.position = "fixed";
+      confirmationMessage.style.top = "50%";
+      confirmationMessage.style.left = "50%";
+      confirmationMessage.style.transform = "translate(-50%, -50%)";
+      confirmationMessage.style.background = "#008f39";
+      confirmationMessage.style.color = "#fff";
+      confirmationMessage.style.padding = "20px";
+      confirmationMessage.style.borderRadius = "10px";
+      confirmationMessage.style.boxShadow = "0 0 15px rgba(0,0,0,0.5)";
+      confirmationMessage.style.zIndex = "1000";
+      confirmationMessage.textContent = "تم تأكيد الفاتورة بنجاح!";
+      document.body.appendChild(confirmationMessage);
+      setTimeout(() => {
+        confirmationMessage.remove();
+        window.location.href = "next-page.html"; // استبدل بالرابط الصحيح
+      }, 2000);
     });
 
     // تهيئة الجدول عند تحميل الصفحة
