@@ -10,7 +10,7 @@
       font-family: 'Amiri', serif;
       background: linear-gradient(180deg, #002b4d, #004c6d);
       color: #fff;
-      overflow: hidden;
+      overflow-x: hidden;
     }
 
     .background-icons {
@@ -27,13 +27,14 @@
       width: 80px;
       height: 80px;
       opacity: 0.1;
+      filter: blur(3px);
     }
 
     .container {
       max-width: 600px;
       margin: 50px auto;
       padding: 20px;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.5);
       border-radius: 15px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
       text-align: center;
@@ -41,12 +42,18 @@
 
     .button {
       margin: 10px;
-      padding: 10px 20px;
+      padding: 15px 30px;
       font-size: 18px;
       background: #005f87;
       color: #fff;
       border: none;
       border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .button:hover {
+      background: #0077a9;
     }
 
     .customer-list {
@@ -60,6 +67,8 @@
       background: rgba(255, 255, 255, 0.2);
       padding: 10px;
       border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
     }
 
     .modal {
@@ -74,19 +83,47 @@
       align-items: center;
     }
 
+    .modal.show {
+      display: flex;
+    }
+
     .modal-content {
       background: #005f87;
       padding: 20px;
       border-radius: 10px;
+      text-align: center;
       color: #fff;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .modal input {
+      width: 80%;
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .modal button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #0077a9;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
     }
   </style>
 </head>
 <body>
   <div class="background-icons">
-    <img src="https://www.flaticon.com/svg/static/icons/svg/3322/3322056.svg" style="top: 10%; left: 20%;">
-    <img src="https://www.flaticon.com/svg/static/icons/svg/2975/2975175.svg" style="top: 40%; left: 60%;">
-    <img src="https://www.flaticon.com/svg/static/icons/svg/1748/1748971.svg" style="top: 70%; left: 10%;">
+    <img src="https://cdn-icons-png.flaticon.com/512/3322/3322056.png" style="top: 10%; left: 20%;">
+    <img src="https://cdn-icons-png.flaticon.com/512/2975/2975175.png" style="top: 40%; left: 60%;">
+    <img src="https://cdn-icons-png.flaticon.com/512/1748/1748971.png" style="top: 70%; left: 10%;">
+    <img src="https://cdn-icons-png.flaticon.com/512/3440/3440626.png" style="top: 20%; left: 80%;">
+    <img src="https://cdn-icons-png.flaticon.com/512/4079/4079304.png" style="top: 60%; left: 30%;">
   </div>
 
   <div class="container">
@@ -109,21 +146,49 @@
     const saveCustomerButton = document.getElementById("saveCustomer");
     const customerList = document.getElementById("customerList");
 
-    function addCustomer() {
-      const name = prompt("ادخل اسم الزبون:");
-      if (!name) return alert("يرجى إدخال اسم!");
-      let customers = JSON.parse(localStorage.getItem("customers")) || [];
-      customers.push(name);
+    // فتح النافذة المنبثقة
+    addCustomerButton.onclick = () => {
+      customerModal.classList.add("show");
+    };
+
+    // إضافة زبون جديد
+    saveCustomerButton.onclick = () => {
+      const customerName = document.getElementById("customerName").value.trim();
+      if (customerName === "") {
+        alert("يرجى إدخال اسم الزبون!");
+        return;
+      }
+
+      const customers = JSON.parse(localStorage.getItem("customers")) || [];
+      customers.push(customerName);
+      localStorage.setItem("customers", JSON.stringify(customers));
+
+      customerModal.classList.remove("show");
+      document.getElementById("customerName").value = "";
+      updateCustomerList();
+    };
+
+    // تحديث قائمة الزبائن
+    function updateCustomerList() {
+      const customers = JSON.parse(localStorage.getItem("customers")) || [];
+      customerList.innerHTML = customers
+        .map((name, index) => `
+          <li class="customer-item">
+            ${name}
+            <button onclick="deleteCustomer(${index})" style="background:red;">حذف</button>
+          </li>
+        `)
+        .join("");
+    }
+
+    // حذف زبون
+    function deleteCustomer(index) {
+      const customers = JSON.parse(localStorage.getItem("customers"));
+      customers.splice(index, 1);
       localStorage.setItem("customers", JSON.stringify(customers));
       updateCustomerList();
     }
 
-    function updateCustomerList() {
-      let customers = JSON.parse(localStorage.getItem("customers")) || [];
-      customerList.innerHTML = customers.map(name => `<li>${name}</li>`).join("");
-    }
-
-    addCustomerButton.onclick = addCustomer;
     updateCustomerList();
   </script>
 </body>
