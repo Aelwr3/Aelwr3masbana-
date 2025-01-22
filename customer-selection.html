@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>إدارة الزبائن</title>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
@@ -15,6 +16,8 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
+      overflow: hidden;
+      position: relative;
     }
 
     h1 {
@@ -76,6 +79,48 @@
       margin-left: 5px;
       padding: 5px 10px;
     }
+
+    /* أيقونات الخلفية */
+    .icon {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      opacity: 0.1;
+      animation: float 6s infinite ease-in-out;
+    }
+
+    .icon:nth-child(1) {
+      top: 10%;
+      left: 15%;
+      animation-delay: 0s;
+    }
+
+    .icon:nth-child(2) {
+      top: 30%;
+      right: 20%;
+      animation-delay: 2s;
+    }
+
+    .icon:nth-child(3) {
+      bottom: 20%;
+      left: 10%;
+      animation-delay: 4s;
+    }
+
+    .icon:nth-child(4) {
+      bottom: 10%;
+      right: 15%;
+      animation-delay: 6s;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
   </style>
 </head>
 <body>
@@ -93,6 +138,12 @@
 
   <!-- قائمة الزبائن -->
   <div id="customerList" class="customer-list"></div>
+
+  <!-- أيقونات الخلفية -->
+  <img src="https://cdn-icons-png.flaticon.com/512/3322/3322056.png" class="icon" alt="Laundry Machine">
+  <img src="https://cdn-icons-png.flaticon.com/512/2975/2975175.png" class="icon" alt="Laundry">
+  <img src="https://cdn-icons-png.flaticon.com/512/1748/1748971.png" class="icon" alt="Detergent">
+  <img src="https://cdn-icons-png.flaticon.com/512/3440/3440626.png" class="icon" alt="Basket">
 
   <script>
     const customerListDiv = document.getElementById("customerList");
@@ -165,7 +216,6 @@
     function selectCustomer(name) {
       localStorage.setItem("selectedCustomer", name);
       alert(`تم اختيار الزبون: ${name}`);
-      // يمكن التوجيه إلى صفحة أخرى هنا
     }
   </script>
 </body>
