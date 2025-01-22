@@ -1,227 +1,130 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>إدارة الزبائن</title>
-  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      font-family: "Amiri", serif;
-      background: linear-gradient(to bottom, #002b4d, #003c5e);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
+      font-family: 'Amiri', serif;
+      background: linear-gradient(180deg, #002b4d, #004c6d);
+      color: #fff;
       overflow: hidden;
-      position: relative;
     }
 
-    h1 {
-      margin: 20px 0;
-      font-size: 2.5rem;
+    .background-icons {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .background-icons img {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      opacity: 0.1;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      text-align: center;
     }
 
     .button {
-      background-color: #005f88;
-      color: white;
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 18px;
+      background: #005f87;
+      color: #fff;
       border: none;
       border-radius: 10px;
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 18px;
-      cursor: pointer;
-      transition: transform 0.2s, background-color 0.3s;
-    }
-
-    .button:hover {
-      background-color: #00739b;
-      transform: scale(1.05);
-    }
-
-    .customer-list, .modal {
-      background-color: #ffffff11;
-      border: 1px solid #005f88;
-      border-radius: 15px;
-      padding: 20px;
-      margin: 20px;
-      width: 90%;
-      max-width: 500px;
-      color: white;
     }
 
     .customer-list {
-      display: none;
+      margin-top: 20px;
+      list-style: none;
+      padding: 0;
     }
 
-    .customer-card {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px;
+    .customer-item {
       margin-bottom: 10px;
-      background-color: #ffffff22;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    }
-
-    .customer-card span {
-      font-size: 18px;
-    }
-
-    .customer-card button {
-      background-color: #00739b;
-      color: white;
-      border: none;
-      padding: 5px 10px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 10px;
       border-radius: 8px;
-      cursor: pointer;
-      margin-left: 5px;
-    }
-
-    .customer-card button:hover {
-      background-color: #0090c3;
     }
 
     .modal {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 90%;
-      max-width: 400px;
-      padding: 20px;
-      background-color: #003c5e;
-      border: 2px solid #005f88;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      z-index: 1000;
-    }
-
-    .modal input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #005f88;
-      border-radius: 8px;
-      background-color: #ffffff11;
-      color: white;
-    }
-
-    .modal button {
-      margin-top: 10px;
-      background-color: #005f88;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .modal button:hover {
-      background-color: #00739b;
-    }
-
-    .overlay {
       display: none;
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 999;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #005f87;
+      padding: 20px;
+      border-radius: 10px;
+      color: #fff;
     }
   </style>
 </head>
 <body>
-  <h1>إدارة الزبائن</h1>
-  <button class="button" onclick="openAddModal()">إضافة زبون جديد</button>
-  <button class="button" onclick="showCustomers()">عرض الزبائن</button>
-
-  <div class="customer-list" id="customerList"></div>
-
-  <div class="modal" id="addCustomerModal">
-    <h2>إضافة زبون جديد</h2>
-    <input type="text" id="newCustomerName" placeholder="أدخل اسم الزبون">
-    <button onclick="addCustomer()">إضافة</button>
-    <button onclick="closeModal()">إلغاء</button>
+  <div class="background-icons">
+    <img src="https://www.flaticon.com/svg/static/icons/svg/3322/3322056.svg" style="top: 10%; left: 20%;">
+    <img src="https://www.flaticon.com/svg/static/icons/svg/2975/2975175.svg" style="top: 40%; left: 60%;">
+    <img src="https://www.flaticon.com/svg/static/icons/svg/1748/1748971.svg" style="top: 70%; left: 10%;">
   </div>
 
-  <div class="overlay" id="overlay"></div>
+  <div class="container">
+    <h1>إدارة الزبائن</h1>
+    <button class="button" id="addCustomer">إضافة زبون جديد</button>
+    <ul class="customer-list" id="customerList"></ul>
+  </div>
+
+  <div class="modal" id="customerModal">
+    <div class="modal-content">
+      <h2>إضافة زبون جديد</h2>
+      <input type="text" id="customerName" placeholder="ادخل اسم الزبون">
+      <button id="saveCustomer">حفظ</button>
+    </div>
+  </div>
 
   <script>
-    let customers = JSON.parse(localStorage.getItem('customers')) || [];
-
-    function openAddModal() {
-      document.getElementById('addCustomerModal').style.display = 'block';
-      document.getElementById('overlay').style.display = 'block';
-    }
-
-    function closeModal() {
-      document.getElementById('addCustomerModal').style.display = 'none';
-      document.getElementById('overlay').style.display = 'none';
-    }
+    const customerModal = document.getElementById("customerModal");
+    const addCustomerButton = document.getElementById("addCustomer");
+    const saveCustomerButton = document.getElementById("saveCustomer");
+    const customerList = document.getElementById("customerList");
 
     function addCustomer() {
-      const nameInput = document.getElementById('newCustomerName');
-      const name = nameInput.value.trim();
-      if (!name) {
-        alert('يرجى إدخال اسم صحيح!');
-        return;
-      }
+      const name = prompt("ادخل اسم الزبون:");
+      if (!name) return alert("يرجى إدخال اسم!");
+      let customers = JSON.parse(localStorage.getItem("customers")) || [];
       customers.push(name);
-      localStorage.setItem('customers', JSON.stringify(customers));
-      nameInput.value = '';
-      closeModal();
-      alert('تم إضافة الزبون بنجاح!');
+      localStorage.setItem("customers", JSON.stringify(customers));
+      updateCustomerList();
     }
 
-    function showCustomers() {
-      const list = document.getElementById('customerList');
-      list.innerHTML = '';
-      customers.forEach((customer, index) => {
-        const card = document.createElement('div');
-        card.className = 'customer-card';
-        card.innerHTML = `
-          <span>${customer}</span>
-          <div>
-            <button onclick="editCustomer(${index})">تعديل</button>
-            <button onclick="deleteCustomer(${index})">حذف</button>
-            <button onclick="selectCustomer(${index})">اختيار</button>
-          </div>
-        `;
-        list.appendChild(card);
-      });
-      list.style.display = 'block';
+    function updateCustomerList() {
+      let customers = JSON.parse(localStorage.getItem("customers")) || [];
+      customerList.innerHTML = customers.map(name => `<li>${name}</li>`).join("");
     }
 
-    function editCustomer(index) {
-      const newName = prompt('أدخل الاسم الجديد:', customers[index]);
-      if (newName) {
-        customers[index] = newName.trim();
-        localStorage.setItem('customers', JSON.stringify(customers));
-        showCustomers();
-      }
-    }
-
-    function deleteCustomer(index) {
-      if (confirm('هل تريد حذف هذا الزبون؟')) {
-        customers.splice(index, 1);
-        localStorage.setItem('customers', JSON.stringify(customers));
-        showCustomers();
-      }
-    }
-
-    function selectCustomer(index) {
-      const selectedCustomer = customers[index];
-      localStorage.setItem('selectedCustomer', selectedCustomer);
-      window.location.href = 'categories.html'; // تعديل الرابط بناءً على صفحة الفئات
-    }
+    addCustomerButton.onclick = addCustomer;
+    updateCustomerList();
   </script>
 </body>
 </html>
