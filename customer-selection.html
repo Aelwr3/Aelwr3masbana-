@@ -27,17 +27,23 @@
       width: 80px;
       height: 80px;
       opacity: 0.1;
-      filter: blur(3px);
+      filter: blur(2px);
     }
 
     .container {
-      max-width: 600px;
+      max-width: 700px;
       margin: 50px auto;
       padding: 20px;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.6);
       border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
       text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #FFD700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
     }
 
     .button {
@@ -49,11 +55,12 @@
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: background 0.3s ease, transform 0.2s ease;
     }
 
     .button:hover {
       background: #0077a9;
+      transform: scale(1.05);
     }
 
     .customer-list {
@@ -69,6 +76,17 @@
       border-radius: 8px;
       display: flex;
       justify-content: space-between;
+      align-items: center;
+    }
+
+    .customer-item button {
+      margin-left: 10px;
+      padding: 8px 15px;
+      background: #FF6347;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
 
     .modal {
@@ -78,9 +96,10 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.7);
       justify-content: center;
       align-items: center;
+      z-index: 1000;
     }
 
     .modal.show {
@@ -115,6 +134,15 @@
       border: none;
       border-radius: 5px;
     }
+
+    .modal-error {
+      background: #FF6347;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      color: #fff;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -136,6 +164,7 @@
     <div class="modal-content">
       <h2>إضافة زبون جديد</h2>
       <input type="text" id="customerName" placeholder="ادخل اسم الزبون">
+      <div class="modal-error" id="errorMessage">يرجى إدخال اسم الزبون!</div>
       <button id="saveCustomer">حفظ</button>
     </div>
   </div>
@@ -145,17 +174,19 @@
     const addCustomerButton = document.getElementById("addCustomer");
     const saveCustomerButton = document.getElementById("saveCustomer");
     const customerList = document.getElementById("customerList");
+    const errorMessage = document.getElementById("errorMessage");
 
     // فتح النافذة المنبثقة
     addCustomerButton.onclick = () => {
       customerModal.classList.add("show");
+      errorMessage.style.display = "none";
     };
 
     // إضافة زبون جديد
     saveCustomerButton.onclick = () => {
       const customerName = document.getElementById("customerName").value.trim();
       if (customerName === "") {
-        alert("يرجى إدخال اسم الزبون!");
+        errorMessage.style.display = "block";
         return;
       }
 
@@ -172,12 +203,14 @@
     function updateCustomerList() {
       const customers = JSON.parse(localStorage.getItem("customers")) || [];
       customerList.innerHTML = customers
-        .map((name, index) => `
+        .map(
+          (name, index) => `
           <li class="customer-item">
             ${name}
-            <button onclick="deleteCustomer(${index})" style="background:red;">حذف</button>
+            <button onclick="deleteCustomer(${index})">حذف</button>
           </li>
-        `)
+        `
+        )
         .join("");
     }
 
