@@ -106,50 +106,13 @@
       margin-top: 20px;
     }
 
-    /* الأيقونات الخلفية */
-    .icon {
-      position: absolute;
-      background-size: cover;
-      opacity: 0.1;
-    }
-
-    .icon1 {
-      width: 100px;
-      height: 100px;
-      top: 10%;
-      left: 5%;
-      background-image: url('https://cdn-icons-png.flaticon.com/512/1995/1995574.png'); /* مكواة */
-    }
-
-    .icon2 {
-      width: 130px;
-      height: 130px;
-      bottom: 20%;
-      right: 10%;
-      background-image: url('https://cdn-icons-png.flaticon.com/512/1995/1995577.png'); /* غسالة */
-    }
-
-    .icon3 {
-      width: 90px;
-      height: 90px;
-      top: 50%;
-      left: 70%;
-      background-image: url('https://cdn-icons-png.flaticon.com/512/1995/1995580.png'); /* سلة غسيل */
-    }
-
-    .emoji {
-      font-size: 50px;
-      margin: 10px 0;
-      animation: bounce 1.5s infinite;
-    }
-
-    @keyframes bounce {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
+    /* رسالة الخطأ */
+    .error {
+      color: #ff6161;
+      margin-top: 10px;
+      font-size: 16px;
+      display: none;
+      animation: fadeIn 0.5s ease-in-out;
     }
 
     @keyframes slideIn {
@@ -162,19 +125,24 @@
         opacity: 1;
       }
     }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="icon icon1"></div>
-  <div class="icon icon2"></div>
-  <div class="icon icon3"></div>
-
   <div class="container">
     <h1>مرحبًا بكم في مصبنة مشاء الله</h1>
     <p>يرجى إدخال الكود للمتابعة</p>
-    <div class="emoji">🫴</div>
     <input type="password" id="codeInput" placeholder="أدخل الكود هنا">
     <button id="confirmButton">تأكيد</button>
+    <p class="error" id="errorMessage">❌ الكود غير صحيح! حاول مرة أخرى.</p>
   </div>
 
   <div class="popup" id="popup">
@@ -188,16 +156,18 @@
     const confirmButton = document.getElementById('confirmButton');
     const codeInput = document.getElementById('codeInput');
     const popup = document.getElementById('popup');
+    const errorMessage = document.getElementById('errorMessage');
 
     confirmButton.addEventListener('click', () => {
       if (codeInput.value === correctCode) {
+        errorMessage.style.display = 'none'; // إخفاء رسالة الخطأ إذا كانت ظاهرة
         popup.style.display = 'block';
         setTimeout(() => {
           localStorage.setItem('accessGranted', true);
           window.location.href = "customer-selection.html";
         }, 2000);
       } else {
-        alert("❌ الكود غير صحيح! حاول مرة أخرى.");
+        errorMessage.style.display = 'block'; // إظهار رسالة الخطأ
       }
     });
 
