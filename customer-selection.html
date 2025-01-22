@@ -20,31 +20,28 @@
             align-items: center;
             flex-direction: column;
             position: relative;
+            overflow: hidden;
         }
 
-        /* إضافة الأيقونات المتحركة في الخلفية */
-        .icon-background {
+        /* إضافة الأيقونات المتحركة */
+        .icon {
             position: absolute;
-            top: 10%;
-            left: 10%;
-            z-index: -1;
-            pointer-events: none;
-            animation: moveIcons 15s linear infinite;
-        }
-
-        .icon-background i {
             font-size: 80px;
             color: rgba(255, 255, 255, 0.3);
-            margin: 10px;
-            animation: moveIcons 10s infinite;
+            animation: moveIcon 10s linear infinite;
         }
 
-        @keyframes moveIcons {
+        .icon-1 { top: 10%; left: 20%; animation-delay: 0s; }
+        .icon-2 { top: 30%; left: 60%; animation-delay: 2s; }
+        .icon-3 { top: 50%; left: 10%; animation-delay: 4s; }
+        .icon-4 { top: 70%; left: 80%; animation-delay: 6s; }
+
+        @keyframes moveIcon {
             0% {
                 transform: translate(0, 0);
             }
             100% {
-                transform: translate(500px, 500px);
+                transform: translate(300px, 300px);
             }
         }
 
@@ -57,6 +54,8 @@
             max-width: 500px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
             text-align: center;
+            position: relative;
+            z-index: 1;
         }
 
         h1 {
@@ -78,7 +77,7 @@
             align-items: center;
             transition: background-color 0.3s, box-shadow 0.3s;
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-            font-family: 'Amiri', serif; /* تحسين الخط للأزرار */
+            font-family: 'Amiri', serif;
         }
 
         button:hover {
@@ -136,6 +135,8 @@
             width: 80%;
             max-width: 300px;
             border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
         }
 
         .modal-content input {
@@ -155,19 +156,21 @@
             cursor: pointer;
             background-color: #10b981;
             color: white;
+            transition: background-color 0.3s;
         }
 
+        .modal-content button:hover {
+            background-color: #0a96b4;
+        }
     </style>
 </head>
 <body>
 
-    <!-- إضافة الأيقونات المتحركة في الخلفية -->
-    <div class="icon-background">
-        <i class="fas fa-tshirt"></i>
-        <i class="fas fa-basketball-ball"></i>
-        <i class="fas fa-cogs"></i>
-        <i class="fas fa-shipping-fast"></i>
-    </div>
+    <!-- إضافة الأيقونات المتحركة -->
+    <i class="fas fa-tshirt icon icon-1"></i>
+    <i class="fas fa-basketball-ball icon icon-2"></i>
+    <i class="fas fa-cogs icon icon-3"></i>
+    <i class="fas fa-shipping-fast icon icon-4"></i>
 
     <div class="container">
         <h1>إدارة الزبائن</h1>
