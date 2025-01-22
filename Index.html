@@ -7,86 +7,80 @@
   <!-- إضافة خط Amiri -->
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    /* إعدادات أساسية */
     body {
       font-family: 'Amiri', serif;
-      background-color: #e3f2fd; /* لون أزرق هادئ للخلفية */
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb); /* تدرج أزرق هادئ */
       margin: 0;
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       height: 100vh;
-      animation: fadeIn 1s ease-in-out;
-      color: #0277bd;
+      color: #0277bd; /* أزرق */
+      overflow: hidden;
+    }
+
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+      animation: fadeInScale 1s ease-in-out;
     }
 
     h1 {
       color: #01579b; /* أزرق داكن */
       font-size: 36px;
-      margin-bottom: 20px;
-      text-align: center;
-      opacity: 0;
-      animation: slideIn 1s ease-in-out forwards 0.5s;
-      font-weight: bold;
+      margin-bottom: 10px;
     }
 
-    .container {
-      background: #ffffff;
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
-      transform: translateY(-50px);
-      animation: slideUp 1s ease-out forwards 1s;
+    p {
+      font-size: 18px;
+      color: #555;
     }
 
     input[type="password"] {
-      font-family: 'Amiri', serif;
-      width: 100%;
+      width: 90%;
       padding: 12px;
-      margin: 15px 0;
+      margin: 20px 0;
       border: 2px solid #81d4fa; /* أزرق فاتح */
       border-radius: 12px;
-      font-size: 20px;
-      outline: none;
+      font-size: 18px;
       transition: all 0.3s ease-in-out;
-      opacity: 0;
-      animation: fadeIn 1s ease-in-out forwards 1.5s;
     }
 
     input[type="password"]:focus {
-      border-color: #0288d1; /* تفاعل مع التركيز */
+      border-color: #0288d1;
       box-shadow: 0 0 8px rgba(2, 136, 209, 0.5);
     }
 
     button {
-      font-family: 'Amiri', serif;
-      background-color: #0288d1; /* الأزرق الداكن */
+      background-color: #0288d1; /* أزرق رئيسي */
       color: white;
       border: none;
-      padding: 15px 30px;
+      padding: 15px 20px;
       margin: 10px 0;
-      border-radius: 15px;
-      font-size: 20px;
+      border-radius: 12px;
+      font-size: 18px;
       cursor: pointer;
-      transition: background-color 0.3s;
-      opacity: 0;
-      animation: fadeIn 1s ease-in-out forwards 2s;
+      transition: all 0.3s;
     }
 
     button:hover {
-      background-color: #01579b; /* عند التمرير */
+      background-color: #01579b; /* أزرق داكن عند التمرير */
     }
 
     .error {
-      color: #d32f2f; /* أحمر */
+      color: #d32f2f;
       font-size: 16px;
-      margin-top: 15px;
+      margin-top: 10px;
       display: none;
     }
 
+    /* نافذة منبثقة */
     .modal {
       display: none;
       position: fixed;
@@ -95,33 +89,27 @@
       transform: translate(-50%, -50%);
       background: #ffffff;
       padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
       text-align: center;
       z-index: 1000;
-      animation: zoomIn 0.5s ease-in-out;
     }
 
     .modal h2 {
-      font-size: 30px;
-      color: #0288d1; /* الأزرق */
-      margin-bottom: 15px;
-      font-weight: bold;
-    }
-
-    .modal p {
-      font-size: 18px;
-      margin-bottom: 20px;
+      color: #0288d1;
+      font-size: 28px;
+      margin-bottom: 10px;
     }
 
     .modal button {
-      background-color: #0288d1; /* أزرق داكن */
+      background-color: #0288d1;
       color: white;
-      padding: 12px 24px;
-      border-radius: 12px;
-      font-size: 18px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 16px;
+      margin-top: 15px;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: all 0.3s;
     }
 
     .modal button:hover {
@@ -137,57 +125,28 @@
       height: 100%;
       background: rgba(0, 0, 0, 0.5);
       z-index: 999;
-      animation: fadeInOverlay 1s ease-in-out;
     }
 
-    .emoji {
-      font-size: 60px;
-      animation: bounce 1s infinite;
-    }
-
-    @keyframes fadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
-    }
-
-    @keyframes fadeInOverlay {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
-    }
-
-    @keyframes slideIn {
-      0% { opacity: 0; transform: translateX(-100%); }
-      100% { opacity: 1; transform: translateX(0); }
-    }
-
-    @keyframes slideUp {
-      0% { opacity: 0; transform: translateY(50px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes zoomIn {
-      0% { opacity: 0; transform: scale(0.5); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    @keyframes bounce {
-      0%, 100% {
-        transform: translateY(0);
+    /* تأثيرات */
+    @keyframes fadeInScale {
+      0% {
+        opacity: 0;
+        transform: scale(0.8);
       }
-      50% {
-        transform: translateY(-15px);
+      100% {
+        opacity: 1;
+        transform: scale(1);
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>مرحبا بكم في مصبنة مشاء الله</h1>
-    <p>من فضلك، أدخل الكود للمتابعة</p>
-    <input type="password" id="codeInput" placeholder="ادخل الكود هنا">
+    <h1>مرحبًا بكم في مصبنة مشاء الله</h1>
+    <p>من فضلك، أدخل الكود الخاص بك للمتابعة</p>
+    <input type="password" id="codeInput" placeholder="أدخل الكود">
     <button id="confirmButton">تأكيد</button>
-    <button id="resetButton">إعادة تعيين</button>
-    <p id="errorMessage" class="error">الكود غير صحيح!</p>
+    <p id="errorMessage" class="error">الكود غير صحيح! حاول مرة أخرى.</p>
   </div>
 
   <!-- نافذة منبثقة -->
@@ -195,14 +154,12 @@
   <div class="modal" id="successModal">
     <h2>✅ تم الدخول بنجاح!</h2>
     <p>مرحبًا بك في مصبنة مشاء الله.</p>
-    <span class="emoji">✨</span>
     <button onclick="proceed()">الانتقال</button>
   </div>
 
   <script>
     const correctCode = "202501";
     const confirmButton = document.getElementById('confirmButton');
-    const resetButton = document.getElementById('resetButton');
     const codeInput = document.getElementById('codeInput');
     const errorMessage = document.getElementById('errorMessage');
     const successModal = document.getElementById('successModal');
@@ -210,22 +167,18 @@
 
     confirmButton.addEventListener('click', () => {
       if (codeInput.value === correctCode) {
-        // إذا الكود صحيح، نعرض النافذة المنبثقة
+        // عرض النافذة المنبثقة
         successModal.style.display = 'block';
         overlay.style.display = 'block';
       } else {
-        errorMessage.style.display = 'block'; // إظهار رسالة الخطأ
+        errorMessage.style.display = 'block';
       }
     });
 
-    resetButton.addEventListener('click', () => {
-      codeInput.value = ''; // مسح الإدخال
-      errorMessage.style.display = 'none'; // إخفاء رسالة الخطأ
-    });
-
     function proceed() {
-      localStorage.setItem('accessGranted', true); // تخزين حالة الدخول
-      window.location.href = "customer-selection.html"; // الانتقال إلى الصفحة التالية
+      // انتقال إلى الصفحة التالية
+      localStorage.setItem('accessGranted', true);
+      window.location.href = "customer-selection.html";
     }
   </script>
 </body>
