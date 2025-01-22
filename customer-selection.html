@@ -27,8 +27,8 @@
         .icon {
             position: absolute;
             font-size: 80px;
-            color: rgba(255, 255, 255, 0.3);
-            animation: moveIcon 10s linear infinite;
+            opacity: 0.2;
+            animation: moveIcon 15s linear infinite;
         }
 
         .icon-1 { top: 10%; left: 20%; animation-delay: 0s; }
@@ -41,10 +41,11 @@
                 transform: translate(0, 0);
             }
             100% {
-                transform: translate(300px, 300px);
+                transform: translate(200px, 200px);
             }
         }
 
+        /* تحسين واجهة نافذة إدخال الزبون */
         .container {
             background: rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(10px);
@@ -166,11 +167,10 @@
 </head>
 <body>
 
-    <!-- إضافة الأيقونات المتحركة -->
-    <i class="fas fa-tshirt icon icon-1"></i>
-    <i class="fas fa-basketball-ball icon icon-2"></i>
-    <i class="fas fa-cogs icon icon-3"></i>
-    <i class="fas fa-shipping-fast icon icon-4"></i>
+    <!-- إضافة الأيقونات المتحركة في الخلفية -->
+    <img src="https://image.flaticon.com/icons/png/512/5455/5455723.png" class="icon icon-1" alt="Handshake Icon">
+    <img src="https://image.flaticon.com/icons/png/512/1865/18653528.png" class="icon icon-2" alt="Customer Retention Icon">
+    <img src="https://image.flaticon.com/icons/png/512/9119/9119160.png" class="icon icon-3" alt="Service Icon">
 
     <div class="container">
         <h1>إدارة الزبائن</h1>
