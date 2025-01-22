@@ -81,52 +81,62 @@
       background: #004a73;
     }
 
-    .message {
+    /* التصميم المنبثق */
+    .popup {
       display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      z-index: 10;
+    }
+
+    .popup h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #005f99;
+    }
+
+    .popup button {
       margin-top: 20px;
-      font-size: 18px;
     }
 
-    .success {
-      color: #a2f3c5;
-    }
-
-    .error {
-      color: #f8caca;
-    }
-
-    /* إضافات جمالية */
-    .decorative-circle {
+    /* الأيقونات الخلفية */
+    .icon {
       position: absolute;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-      animation: float 5s infinite ease-in-out;
+      background-size: cover;
+      opacity: 0.2;
+      filter: blur(8px);
+      animation: float 8s infinite ease-in-out;
     }
 
-    .circle1 {
-      width: 200px;
-      height: 200px;
-      top: -50px;
-      right: -50px;
+    .icon1 {
+      width: 120px;
+      height: 120px;
+      top: 10%;
+      left: 5%;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/1995/1995574.png'); /* مكواة */
     }
 
-    .circle2 {
+    .icon2 {
       width: 150px;
       height: 150px;
-      bottom: -40px;
-      left: -40px;
+      bottom: 20%;
+      right: 10%;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/1995/1995577.png'); /* غسالة */
     }
 
-    /* الحركات */
-    @keyframes slideIn {
-      0% {
-        transform: translateY(50px);
-        opacity: 0;
-      }
-      100% {
-        transform: translateY(0);
-        opacity: 1;
-      }
+    .icon3 {
+      width: 100px;
+      height: 100px;
+      top: 50%;
+      left: 70%;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/1995/1995580.png'); /* سلة غسيل */
     }
 
     @keyframes float {
@@ -138,50 +148,57 @@
       }
     }
 
-    @keyframes fadeIn {
+    @keyframes slideIn {
       0% {
+        transform: translateY(50px);
         opacity: 0;
       }
       100% {
+        transform: translateY(0);
         opacity: 1;
       }
     }
   </style>
 </head>
 <body>
-  <div class="decorative-circle circle1"></div>
-  <div class="decorative-circle circle2"></div>
+  <div class="icon icon1"></div>
+  <div class="icon icon2"></div>
+  <div class="icon icon3"></div>
 
   <div class="container">
     <h1>مرحبًا بكم في مصبنة مشاء الله</h1>
     <p>يرجى إدخال الكود للمتابعة</p>
     <input type="password" id="codeInput" placeholder="أدخل الكود هنا">
     <button id="confirmButton">تأكيد</button>
-    <p id="successMessage" class="message success">✅ الكود صحيح، جاري التوجيه...</p>
-    <p id="errorMessage" class="message error">❌ الكود غير صحيح! حاول مرة أخرى.</p>
+  </div>
+
+  <div class="popup" id="popup">
+    <h2>✅ الكود صحيح!</h2>
+    <p>جاري التوجيه إلى الصفحة التالية...</p>
+    <button onclick="closePopup()">حسنًا</button>
   </div>
 
   <script>
     const correctCode = "202501";
     const confirmButton = document.getElementById('confirmButton');
     const codeInput = document.getElementById('codeInput');
-    const errorMessage = document.getElementById('errorMessage');
-    const successMessage = document.getElementById('successMessage');
+    const popup = document.getElementById('popup');
 
     confirmButton.addEventListener('click', () => {
       if (codeInput.value === correctCode) {
-        errorMessage.style.display = 'none';
-        successMessage.style.display = 'block';
+        popup.style.display = 'block';
         setTimeout(() => {
-          // الانتقال إلى الصفحة التالية
           localStorage.setItem('accessGranted', true);
           window.location.href = "customer-selection.html";
-        }, 1500);
+        }, 2000);
       } else {
-        successMessage.style.display = 'none';
-        errorMessage.style.display = 'block';
+        alert("❌ الكود غير صحيح! حاول مرة أخرى.");
       }
     });
+
+    function closePopup() {
+      popup.style.display = 'none';
+    }
   </script>
 </body>
 </html>
