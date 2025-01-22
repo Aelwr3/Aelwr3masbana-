@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مصبنة مشاء الله - إدخال الكود</title>
+  <!-- إضافة خط Amiri -->
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Amiri', serif;
+      background-color: #e3f2fd; /* لون أزرق هادئ للخلفية */
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      animation: fadeIn 1s ease-in-out;
+      color: #0277bd;
+    }
+
+    h1 {
+      color: #01579b; /* أزرق داكن */
+      font-size: 36px;
+      margin-bottom: 20px;
+      text-align: center;
+      opacity: 0;
+      animation: slideIn 1s ease-in-out forwards 0.5s;
+      font-weight: bold;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      transform: translateY(-50px);
+      animation: slideUp 1s ease-out forwards 1s;
+    }
+
+    input[type="password"] {
+      font-family: 'Amiri', serif;
+      width: 100%;
+      padding: 12px;
+      margin: 15px 0;
+      border: 2px solid #81d4fa; /* أزرق فاتح */
+      border-radius: 12px;
+      font-size: 20px;
+      outline: none;
+      transition: all 0.3s ease-in-out;
+      opacity: 0;
+      animation: fadeIn 1s ease-in-out forwards 1.5s;
+    }
+
+    input[type="password"]:focus {
+      border-color: #0288d1; /* تفاعل مع التركيز */
+      box-shadow: 0 0 8px rgba(2, 136, 209, 0.5);
+    }
+
+    button {
+      font-family: 'Amiri', serif;
+      background-color: #0288d1; /* الأزرق الداكن */
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      margin: 10px 0;
+      border-radius: 15px;
+      font-size: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      opacity: 0;
+      animation: fadeIn 1s ease-in-out forwards 2s;
+    }
+
+    button:hover {
+      background-color: #01579b; /* عند التمرير */
+    }
+
+    .error {
+      color: #d32f2f; /* أحمر */
+      font-size: 16px;
+      margin-top: 15px;
+      display: none;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      z-index: 1000;
+      animation: zoomIn 0.5s ease-in-out;
+    }
+
+    .modal h2 {
+      font-size: 30px;
+      color: #0288d1; /* الأزرق */
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .modal p {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .modal button {
+      background-color: #0288d1; /* أزرق داكن */
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .modal button:hover {
+      background-color: #01579b;
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      animation: fadeInOverlay 1s ease-in-out;
+    }
+
+    .emoji {
+      font-size: 60px;
+      animation: bounce 1s infinite;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes fadeInOverlay {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+      0% { opacity: 0; transform: translateX(-100%); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes slideUp {
+      0% { opacity: 0; transform: translateY(50px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes zoomIn {
+      0% { opacity: 0; transform: scale(0.5); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-15px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>مرحبا بكم في مصبنة مشاء الله</h1>
+    <p>من فضلك، أدخل الكود للمتابعة</p>
+    <input type="password" id="codeInput" placeholder="ادخل الكود هنا">
+    <button id="confirmButton">تأكيد</button>
+    <button id="resetButton">إعادة تعيين</button>
+    <p id="errorMessage" class="error">الكود غير صحيح!</p>
+  </div>
+
+  <!-- نافذة منبثقة -->
+  <div class="overlay" id="overlay"></div>
+  <div class="modal" id="successModal">
+    <h2>✅ تم الدخول بنجاح!</h2>
+    <p>مرحبًا بك في مصبنة مشاء الله.</p>
+    <span class="emoji">✨</span>
+    <button onclick="proceed()">الانتقال</button>
+  </div>
+
+  <script>
+    const correctCode = "202501";
+    const confirmButton = document.getElementById('confirmButton');
+    const resetButton = document.getElementById('resetButton');
+    const codeInput = document.getElementById('codeInput');
+    const errorMessage = document.getElementById('errorMessage');
+    const successModal = document.getElementById('successModal');
+    const overlay = document.getElementById('overlay');
+
+    confirmButton.addEventListener('click', () => {
+      if (codeInput.value === correctCode) {
+        // إذا الكود صحيح، نعرض النافذة المنبثقة
+        successModal.style.display = 'block';
+        overlay.style.display = 'block';
+      } else {
+        errorMessage.style.display = 'block'; // إظهار رسالة الخطأ
+      }
+    });
+
+    resetButton.addEventListener('click', () => {
+      codeInput.value = ''; // مسح الإدخال
+      errorMessage.style.display = 'none'; // إخفاء رسالة الخطأ
+    });
+
+    function proceed() {
+      localStorage.setItem('accessGranted', true); // تخزين حالة الدخول
+      window.location.href = "customer-selection.html"; // الانتقال إلى الصفحة التالية
+    }
+  </script>
+</body>
+</html>
