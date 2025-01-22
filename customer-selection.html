@@ -23,25 +23,25 @@
             overflow: hidden;
         }
 
-        /* إضافة الأيقونات المتحركة */
+        /* الأيقونات المتحركة */
         .icon {
             position: absolute;
-            font-size: 80px;
             opacity: 0.2;
-            animation: moveIcon 15s linear infinite;
+            width: 100px;
+            height: 100px;
+            animation: moveIcon 6s ease-in-out infinite;
         }
 
-        .icon-1 { top: 10%; left: 20%; animation-delay: 0s; }
-        .icon-2 { top: 30%; left: 60%; animation-delay: 2s; }
-        .icon-3 { top: 50%; left: 10%; animation-delay: 4s; }
-        .icon-4 { top: 70%; left: 80%; animation-delay: 6s; }
+        .icon-1 { top: 10%; left: 15%; animation-delay: 0s; }
+        .icon-2 { top: 40%; left: 70%; animation-delay: 1s; }
+        .icon-3 { top: 70%; left: 25%; animation-delay: 2s; }
 
         @keyframes moveIcon {
-            0% {
+            0%, 100% {
                 transform: translate(0, 0);
             }
-            100% {
-                transform: translate(200px, 200px);
+            50% {
+                transform: translate(20px, 20px);
             }
         }
 
@@ -106,16 +106,6 @@
             align-items: center;
         }
 
-        #customerList button {
-            background-color: #f44336;
-            font-size: 1rem;
-            margin-left: 10px;
-        }
-
-        #customerList button:hover {
-            background-color: #d32f2f;
-        }
-
         #addCustomerModal {
             display: none;
             position: fixed;
@@ -168,9 +158,9 @@
 <body>
 
     <!-- إضافة الأيقونات المتحركة في الخلفية -->
-    <img src="https://image.flaticon.com/icons/png/512/5455/5455723.png" class="icon icon-1" alt="Handshake Icon">
-    <img src="https://image.flaticon.com/icons/png/512/1865/18653528.png" class="icon icon-2" alt="Customer Retention Icon">
-    <img src="https://image.flaticon.com/icons/png/512/9119/9119160.png" class="icon icon-3" alt="Service Icon">
+    <img src="https://cdn-icons-png.flaticon.com/512/5455/5455723.png" class="icon icon-1" alt="Handshake Icon">
+    <img src="https://cdn-icons-png.flaticon.com/512/1865/18653528.png" class="icon icon-2" alt="Customer Retention Icon">
+    <img src="https://cdn-icons-png.flaticon.com/512/9119/9119160.png" class="icon icon-3" alt="Service Icon">
 
     <div class="container">
         <h1>إدارة الزبائن</h1>
@@ -195,10 +185,6 @@
 
         document.getElementById('closeModal').addEventListener('click', function() {
             document.getElementById('addCustomerModal').style.display = 'none';
-        });
-
-        document.getElementById('viewCustomersBtn').addEventListener('click', function() {
-            loadCustomers();
         });
 
         window.onclick = function(event) {
