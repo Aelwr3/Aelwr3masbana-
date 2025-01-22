@@ -150,6 +150,15 @@
         opacity: 1;
       }
     }
+
+    /* إخفاء رسالة الخطأ بشكل افتراضي */
+    .error {
+      display: none;
+      font-size: 16px;
+      color: #ff5252;
+      margin-top: 10px;
+      animation: fadeIn 0.8s ease-in;
+    }
   </style>
 </head>
 <body>
@@ -176,8 +185,10 @@
     confirmButton.addEventListener('click', () => {
       if (codeInput.value === correctCode) {
         errorMessage.style.display = 'none'; // إخفاء رسالة الخطأ إذا كانت ظاهرة
-        alert('✅ الكود صحيح! يتم الآن التوجيه...');
-        window.location.href = "customer-selection.html";
+        document.body.innerHTML = `<h1 style="color:#00e676; text-align:center;">✅ الكود صحيح! يتم الآن التوجيه...</h1>`;
+        setTimeout(() => {
+          window.location.href = "customer-selection.html";
+        }, 2000); // انتظار ثانيتين قبل التوجيه
       } else {
         errorMessage.style.display = 'block'; // إظهار رسالة الخطأ
       }
