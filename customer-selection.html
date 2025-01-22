@@ -91,6 +91,28 @@
             padding: 10px;
             width: 100%;
         }
+        .message {
+            margin-top: 10px;
+            font-size: 1rem;
+            color: green;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: rgba(255, 255, 255, 0.8);
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        li button {
+            padding: 5px 10px;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -103,6 +125,7 @@
         <h1>إدارة الزبائن</h1>
         <button id="addCustomerBtn">🆕 إدخال زبون جديد</button>
         <button id="viewCustomersBtn">📇 اختيار زبون</button>
+        <p class="message" id="successMessage"></p>
     </div>
 
     <!-- نافذة إدخال زبون -->
@@ -130,6 +153,7 @@
         const addCustomerModal = document.getElementById('addCustomerModal');
         const customerListModal = document.getElementById('customerListModal');
         const customerList = document.getElementById('customerList');
+        const successMessage = document.getElementById('successMessage');
 
         addCustomerBtn.addEventListener('click', () => openModal('addCustomerModal'));
         viewCustomersBtn.addEventListener('click', showCustomerList);
@@ -150,7 +174,7 @@
                 localStorage.setItem('customers', JSON.stringify(customers));
                 document.getElementById('customerName').value = '';
                 closeModal('addCustomerModal');
-                alert('تمت إضافة الزبون بنجاح!');
+                displayMessage('تمت إضافة الزبون بنجاح!');
             }
         }
 
@@ -160,10 +184,17 @@
             customers.forEach((customer, index) => {
                 const li = document.createElement('li');
                 li.textContent = customer.name;
+
                 const deleteBtn = document.createElement('button');
                 deleteBtn.textContent = 'حذف';
                 deleteBtn.onclick = () => deleteCustomer(index);
+
+                const selectBtn = document.createElement('button');
+                selectBtn.textContent = 'اختيار';
+                selectBtn.onclick = () => selectCustomer(customer.name);
+
                 li.appendChild(deleteBtn);
+                li.appendChild(selectBtn);
                 customerList.appendChild(li);
             });
             openModal('customerListModal');
@@ -174,6 +205,17 @@
             customers.splice(index, 1);
             localStorage.setItem('customers', JSON.stringify(customers));
             showCustomerList();
+        }
+
+        function selectCustomer(name) {
+            localStorage.setItem('selectedCustomer', name);
+            alert(`تم اختيار الزبون: ${name}`);
+            closeModal('customerListModal');
+        }
+
+        function displayMessage(msg) {
+            successMessage.textContent = msg;
+            setTimeout(() => { successMessage.textContent = ''; }, 3000);
         }
     </script>
 </body>
