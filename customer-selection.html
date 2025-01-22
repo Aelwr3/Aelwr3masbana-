@@ -46,7 +46,7 @@
         }
         button {
             font-family: 'Amiri', serif;
-            background-color: #10b981;
+            background-color: #1e90ff; /* تغيير اللون إلى الأزرق */
             color: white;
             border: none;
             padding: 15px 30px;
@@ -57,7 +57,7 @@
             transition: 0.3s;
         }
         button:hover {
-            background-color: #0a96b4;
+            background-color: #4169e1;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
         }
         #addCustomerModal, #customerListModal {
@@ -209,8 +209,7 @@
 
         function selectCustomer(name) {
             localStorage.setItem('selectedCustomer', name);
-            alert(`تم اختيار الزبون: ${name}`);
-            closeModal('customerListModal');
+            window.location.href = "selection.html"; // الانتقال إلى الصفحة التالية
         }
 
         function displayMessage(msg) {
