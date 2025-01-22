@@ -22,12 +22,12 @@
 
     /* تصميم الحاوية */
     .container {
-      background: rgba(255, 255, 255, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(6px);
       border-radius: 15px;
       padding: 30px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
       text-align: center;
       animation: slideIn 1.2s ease-in-out;
     }
@@ -42,25 +42,26 @@
     p {
       font-size: 18px;
       color: #e0f7fa;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
     input[type="password"] {
       width: 80%;
-      padding: 10px;
+      padding: 12px;
       margin: 20px auto;
       font-size: 18px;
       border: none;
       border-radius: 8px;
       outline: none;
       text-align: center;
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: rgba(255, 255, 255, 0.9);
       color: #005f99;
+      font-weight: bold;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
     input[type="password"]::placeholder {
-      color: #777;
+      color: #666;
       font-style: italic;
     }
 
@@ -88,7 +89,8 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: rgba(255, 255, 255, 0.9);
+      background: #ffffff;
+      color: #005f99;
       padding: 30px;
       border-radius: 15px;
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
@@ -99,7 +101,6 @@
     .popup h2 {
       font-size: 24px;
       margin-bottom: 10px;
-      color: #005f99;
     }
 
     .popup button {
@@ -110,41 +111,56 @@
     .icon {
       position: absolute;
       background-size: cover;
-      opacity: 0.2;
-      filter: blur(8px);
+      opacity: 0.3;
+      filter: blur(4px);
       animation: float 8s infinite ease-in-out;
     }
 
     .icon1 {
-      width: 120px;
-      height: 120px;
+      width: 100px;
+      height: 100px;
       top: 10%;
       left: 5%;
       background-image: url('https://cdn-icons-png.flaticon.com/512/1995/1995574.png'); /* مكواة */
     }
 
     .icon2 {
-      width: 150px;
-      height: 150px;
+      width: 130px;
+      height: 130px;
       bottom: 20%;
       right: 10%;
       background-image: url('https://cdn-icons-png.flaticon.com/512/1995/1995577.png'); /* غسالة */
     }
 
     .icon3 {
-      width: 100px;
-      height: 100px;
+      width: 90px;
+      height: 90px;
       top: 50%;
       left: 70%;
       background-image: url('https://cdn-icons-png.flaticon.com/512/1995/1995580.png'); /* سلة غسيل */
     }
 
-    @keyframes float {
+    .emoji {
+      font-size: 50px;
+      margin: 10px 0;
+      animation: bounce 1.5s infinite;
+    }
+
+    @keyframes bounce {
       0%, 100% {
-        transform: translateY(-20px);
+        transform: translateY(0);
       }
       50% {
-        transform: translateY(20px);
+        transform: translateY(-10px);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(-15px);
+      }
+      50% {
+        transform: translateY(15px);
       }
     }
 
@@ -168,6 +184,7 @@
   <div class="container">
     <h1>مرحبًا بكم في مصبنة مشاء الله</h1>
     <p>يرجى إدخال الكود للمتابعة</p>
+    <div class="emoji">🧺</div>
     <input type="password" id="codeInput" placeholder="أدخل الكود هنا">
     <button id="confirmButton">تأكيد</button>
   </div>
