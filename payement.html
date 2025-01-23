@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>صفحة الدفع</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
+    
+    body {
+      font-family: 'Amiri', serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #002b4d, #004c6d);
+      color: white;
+      text-align: center;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      font-weight: 700;
+      margin: 20px;
+    }
+
+    .payment-container {
+      width: 80%;
+      margin: 20px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .invoice-details p {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+
+    .payment-status {
+      margin: 20px 0;
+    }
+
+    select {
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      outline: none;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #1e7e34;
+    }
+
+    .warning-message {
+      margin: 20px auto;
+      padding: 20px;
+      background-color: rgba(255, 255, 0, 0.2);
+      border: 2px solid #ffcc00;
+      border-radius: 10px;
+      font-size: 18px;
+      color: #ffcc00;
+      display: none;
+    }
+
+    #countdown {
+      font-weight: bold;
+      color: #ffdf5d;
+    }
+  </style>
+</head>
+<body>
+  <h1>صفحة الدفع</h1>
+
+  <div class="payment-container">
+    <div class="invoice-details">
+      <p>اسم الزبون: <span id="customerName"></span></p>
+      <p>رقم الفاتورة: <span id="invoiceNumber"></span></p>
+      <p>مجموع الفاتورة: <span id="totalAmount"></span> درهم</p>
+    </div>
+
+    <div class="payment-status">
+      <label for="paymentStatus">حالة الدفع:</label>
+      <select id="paymentStatus">
+        <option value="مدفوعة بالكامل">مدفوعة بالكامل</option>
+        <option value="مدفوعة جزئيًا">مدفوعة جزئيًا</option>
+        <option value="غير مدفوعة">غير مدفوعة</option>
+      </select>
+    </div>
+
+    <button id="confirmPaymentButton">تأكيد الدفع</button>
+
+    <div class="warning-message" id="warningMessage">
+      <p>عند تأكيد الدفع، لا يمكن تعديل تفاصيل الفاتورة مستقبلًا. يمكنك فقط تعديل حالة الدفع.</p>
+      <p>سيتم الانتقال إلى الصفحة التالية خلال <span id="countdown">10</span> ثوانٍ.</p>
+      <button id="cancelButton">إلغاء</button>
+    </div>
+  </div>
+
+  <script>
+    // استرداد بيانات الفاتورة من localStorage
+    const customerName = localStorage.getItem('customerName') || 'غير محدد';
+    const invoiceNumber = localStorage.getItem('invoiceNumber') || 'غير محدد';
+    const totalAmount = localStorage.getItem('totalAmount') || '0';
+
+    // عرض البيانات في الصفحة
+    document.getElementById('customerName').textContent = customerName;
+    document.getElementById('invoiceNumber').textContent = invoiceNumber;
+    document.getElementById('totalAmount').textContent = totalAmount;
+
+    // مرجع للعناصر
+    const confirmPaymentButton = document.getElementById('confirmPaymentButton');
+    const warningMessage = document.getElementById('warningMessage');
+    const countdownElement = document.getElementById('countdown');
+    const cancelButton = document.getElementById('cancelButton');
+    const paymentStatusSelect = document.getElementById('paymentStatus');
+
+    let countdownInterval;
+
+    // عند الضغط على زر تأكيد الدفع
+    confirmPaymentButton.addEventListener('click', () => {
+      warningMessage.style.display = 'block';
+      let countdown = 10;
+
+      // بدء العد التنازلي
+      countdownElement.textContent = countdown;
+      countdownInterval = setInterval(() => {
+        countdown--;
+        countdownElement.textContent = countdown;
+
+        if (countdown === 0) {
+          clearInterval(countdownInterval);
+          savePaymentDetails();
+        }
+      }, 1000);
+    });
+
+    // عند الضغط على زر إلغاء
+    cancelButton.addEventListener('click', () => {
+      warningMessage.style.display = 'none';
+      clearInterval(countdownInterval);
+    });
+
+    // حفظ حالة الدفع في localStorage والانتقال إلى الصفحة التالية
+    function savePaymentDetails() {
+      const paymentStatus = paymentStatusSelect.value;
+
+      // حفظ حالة الدفع
+      const invoiceKey = `invoice_${invoiceNumber}`;
+      const invoiceData = {
+        customerName,
+        invoiceNumber,
+        totalAmount,
+        paymentStatus,
+      };
+
+      localStorage.setItem(invoiceKey, JSON.stringify(invoiceData));
+      alert('تم تأكيد الدفع وحفظ البيانات بنجاح!');
+      window.location.href = 'nextPage.html'; // الانتقال إلى الصفحة التالية
+    }
+  </script>
+</body>
+</html>
