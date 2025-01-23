@@ -6,7 +6,7 @@
   <title>صفحة الدفع</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
-
+    
     body {
       font-family: 'Amiri', serif;
       margin: 0;
@@ -14,158 +14,168 @@
       background: linear-gradient(to bottom, #002b4d, #004c6d);
       color: white;
       text-align: center;
-      overflow-x: hidden;
     }
 
-    h1 {
-      font-weight: 700;
-      margin: 20px;
-    }
-
-    .payment-container {
+    .container {
       width: 80%;
-      margin: 20px auto;
-      padding: 20px;
+      margin: 50px auto;
       background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
 
-    .invoice-details p {
-      font-size: 18px;
-      margin: 10px 0;
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
     }
 
-    select {
+    .invoice-details {
+      margin: 20px 0;
+      text-align: left;
+      font-size: 18px;
+      line-height: 1.8;
+    }
+
+    .invoice-details span {
+      font-weight: bold;
+    }
+
+    .payment-status {
+      margin: 30px 0;
+    }
+
+    select, input[type="number"] {
+      font-size: 18px;
       padding: 10px;
-      font-size: 16px;
+      margin: 10px 0;
       border: none;
       border-radius: 5px;
-      outline: none;
-      margin: 20px 0;
+      width: 60%;
+    }
+
+    .buttons {
+      margin-top: 30px;
     }
 
     button {
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #28a745;
+      padding: 12px 20px;
+      margin: 10px;
+      background: #28a745;
       color: white;
       border: none;
       border-radius: 5px;
+      font-size: 18px;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background-color 0.3s ease;
     }
 
     button:hover {
       background-color: #1e7e34;
     }
 
-    .cancel-button {
-      background-color: #dc3545;
-    }
-
-    .cancel-button:hover {
-      background-color: #a71d2a;
-    }
-
-    .warning-message {
-      margin: 20px auto;
-      padding: 20px;
-      background-color: rgba(255, 255, 0, 0.2);
-      color: black;
-      border-radius: 10px;
-      font-weight: bold;
-      display: none;
+    .warning {
+      color: #ffc107;
+      margin-top: 20px;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
-  <h1>صفحة الدفع</h1>
-  <div class="payment-container">
+
+  <div class="container">
+    <h1>صفحة الدفع</h1>
+
+    <!-- تفاصيل الفاتورة -->
     <div class="invoice-details">
-      <p>اسم الزبون: <span id="customerName">غير معروف</span></p>
-      <p>رقم الفاتورة: <span id="invoiceNumber">0</span></p>
-      <p>مجموع الفاتورة: <span id="totalAmount">0</span> درهم</p>
+      <p>اسم العميل: <span id="customerName"></span></p>
+      <p>رقم الفاتورة: <span id="invoiceNumber"></span></p>
+      <p>تاريخ الفاتورة: <span id="invoiceDate"></span></p>
+      <p>إجمالي المبلغ: <span id="totalAmount"></span> درهم</p>
     </div>
 
-    <select id="paymentStatus">
-      <option value="مدفوع">مدفوع</option>
-      <option value="غير مدفوع">غير مدفوع</option>
-      <option value="مدفوع جزئياً">مدفوع جزئياً</option>
-    </select>
+    <!-- حالة الدفع -->
+    <div class="payment-status">
+      <label for="paymentStatus">حالة الدفع:</label>
+      <select id="paymentStatus">
+        <option value="unpaid">غير مدفوع</option>
+        <option value="partial">مدفوع جزئيًا</option>
+        <option value="paid">مدفوع بالكامل</option>
+      </select>
 
-    <button id="confirmButton">تأكيد الدفع</button>
-    <button id="cancelButton" class="cancel-button" style="display:none;">إلغاء</button>
-    
-    <div id="warningMessage" class="warning-message">
-      سيتم تأكيد الدفع خلال <span id="countdown">10</span> ثوانٍ. هل تريد الإلغاء؟
+      <div id="partialPaymentContainer" style="display: none;">
+        <label for="partialPayment">المبلغ المدفوع:</label>
+        <input type="number" id="partialPayment" placeholder="أدخل المبلغ المدفوع" min="0">
+      </div>
     </div>
+
+    <!-- أزرار التحكم -->
+    <div class="buttons">
+      <button id="confirmPayment">تأكيد الدفع</button>
+      <button id="goBack">العودة للتعديل</button>
+    </div>
+
+    <p class="warning" id="warningMessage" style="display: none;">
+      ⚠️ بعد تأكيد الدفع، لن تتمكن من تعديل حالة الفاتورة.
+    </p>
   </div>
 
   <script>
-    // جلب بيانات الفاتورة من localStorage
-    const customerName = localStorage.getItem('customerName') || 'غير معروف';
-    const invoiceNumber = localStorage.getItem('currentInvoiceNumber') || '0';
-    const totalAmount = localStorage.getItem('totalAmount') || '0';
-    const confirmButton = document.getElementById('confirmButton');
-    const cancelButton = document.getElementById('cancelButton');
-    const warningMessage = document.getElementById('warningMessage');
-    const countdownElement = document.getElementById('countdown');
-    let countdown = 10; // عدد الثواني للتحذير
-    let interval;
+    // استرجاع بيانات الفاتورة من localStorage
+    const customerName = localStorage.getItem('selectedCustomer') || 'غير محدد';
+    const invoiceNumber = localStorage.getItem('invoiceNumber') || '1';
+    const totalAmount = parseFloat(localStorage.getItem('totalAmount')) || 0;
 
-    // عرض تفاصيل الفاتورة
+    // عرض البيانات على الصفحة
     document.getElementById('customerName').textContent = customerName;
     document.getElementById('invoiceNumber').textContent = invoiceNumber;
-    document.getElementById('totalAmount').textContent = totalAmount;
+    document.getElementById('invoiceDate').textContent = new Date().toLocaleDateString();
+    document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
 
-    // عند الضغط على زر التأكيد
-    confirmButton.addEventListener('click', () => {
-      // إظهار الرسالة التحذيرية وزر الإلغاء
+    // إظهار حقل الدفع الجزئي عند الاختيار
+    const paymentStatus = document.getElementById('paymentStatus');
+    const partialPaymentContainer = document.getElementById('partialPaymentContainer');
+    const partialPaymentInput = document.getElementById('partialPayment');
+    const warningMessage = document.getElementById('warningMessage');
+
+    paymentStatus.addEventListener('change', () => {
+      if (paymentStatus.value === 'partial') {
+        partialPaymentContainer.style.display = 'block';
+      } else {
+        partialPaymentContainer.style.display = 'none';
+        partialPaymentInput.value = '';
+      }
+    });
+
+    // تأكيد الدفع
+    document.getElementById('confirmPayment').addEventListener('click', () => {
+      const selectedStatus = paymentStatus.value;
+      const partialPayment = parseFloat(partialPaymentInput.value) || 0;
+
+      if (selectedStatus === 'partial' && partialPayment >= totalAmount) {
+        alert('المبلغ المدفوع الجزئي لا يمكن أن يكون أكبر من أو يساوي الإجمالي.');
+        return;
+      }
+
       warningMessage.style.display = 'block';
-      cancelButton.style.display = 'inline-block';
-      confirmButton.disabled = true; // تعطيل زر التأكيد أثناء العد
 
-      // بدء العد التنازلي
-      interval = setInterval(() => {
-        countdown--;
-        countdownElement.textContent = countdown;
-
-        if (countdown === 0) {
-          clearInterval(interval);
-          saveInvoiceData(); // حفظ بيانات الفاتورة
-        }
-      }, 1000);
-    });
-
-    // عند الضغط على زر الإلغاء
-    cancelButton.addEventListener('click', () => {
-      clearInterval(interval); // إيقاف العد التنازلي
-      countdown = 10; // إعادة تعيين العداد
-      countdownElement.textContent = countdown;
-      warningMessage.style.display = 'none'; // إخفاء الرسالة
-      cancelButton.style.display = 'none'; // إخفاء زر الإلغاء
-      confirmButton.disabled = false; // إعادة تفعيل زر التأكيد
-    });
-
-    // حفظ بيانات الفاتورة
-    function saveInvoiceData() {
-      const paymentStatus = document.getElementById('paymentStatus').value;
-
-      // إنشاء كائن الفاتورة
-      const invoiceData = {
+      // تحديث البيانات في localStorage
+      const invoices = JSON.parse(localStorage.getItem('invoices')) || [];
+      invoices.push({
         customerName,
         invoiceNumber,
         totalAmount,
-        paymentStatus,
-      };
+        paymentStatus: selectedStatus,
+        partialPayment,
+      });
+      localStorage.setItem('invoices', JSON.stringify(invoices));
+    });
 
-      // حفظ الفاتورة في localStorage
-      localStorage.setItem(`invoice_${invoiceNumber}`, JSON.stringify(invoiceData));
-
-      // الانتقال إلى الصفحة التالية (مثال)
-      window.location.href = 'nextPage.html';
-    }
+    // العودة للتعديل
+    document.getElementById('goBack').addEventListener('click', () => {
+      window.location.href = 'editInvoice.html';
+    });
   </script>
+
 </body>
 </html>
