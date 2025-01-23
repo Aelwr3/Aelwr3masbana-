@@ -83,15 +83,6 @@
     .delete-button:hover {
       background-color: #cc4c45;
     }
-    .confirmation-message {
-      display: none;
-      margin-top: 20px;
-      padding: 10px;
-      background-color: #004c6d;
-      color: #fff;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    }
     @keyframes float {
       0% {
         transform: perspective(800px) rotateX(10deg) translateY(0px);
@@ -136,16 +127,12 @@
 
     <button id="editButton">تعديل الفاتورة</button>
     <button id="confirmButton">تأكيد</button>
-
-    <div class="confirmation-message" id="confirmationMessage">
-      تم تأكيد الفاتورة بنجاح!
-    </div>
   </div>
 
   <script>
     // جلب البيانات من localStorage
     let selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
-    let customerName = localStorage.getItem('customerName') || 'غير محدد';
+    let customerName = localStorage.getItem('selectedCustomer') || 'غير محدد';
     let invoiceNumber = parseInt(localStorage.getItem('invoiceNumber') || '1');
     let totalAmount = 0;
 
@@ -177,15 +164,13 @@
 
     // زر تعديل الفاتورة
     document.getElementById('editButton').addEventListener('click', () => {
-      window.location.href = 'nextPage.html'; // العودة إلى صفحة التعديل
+      window.location.href = 'editInvoice.html'; // العودة إلى صفحة التعديل
     });
 
     // زر التأكيد
     document.getElementById('confirmButton').addEventListener('click', () => {
-      document.getElementById('confirmationMessage').style.display = 'block';
-      setTimeout(() => {
-        window.location.href = 'paymentPage.html'; // الانتقال إلى صفحة الدفع
-      }, 2000); // انتظار 2 ثانية لعرض الرسالة
+      alert('تم التأكيد');
+      window.location.href = 'paymentPage.html'; // الانتقال إلى صفحة الدفع
     });
   </script>
 
