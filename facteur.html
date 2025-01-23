@@ -20,24 +20,46 @@
       font-weight: 700;
       margin: 20px;
     }
-    .invoice-details {
-      margin-top: 30px;
+    .invoice-container {
+      position: relative;
+      padding: 20px;
+      margin: 20px auto;
+      width: 90%;
+      max-width: 600px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .invoice-header {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .invoice-details span {
+      display: block;
+      margin: 10px 0;
+      font-size: 18px;
     }
     .invoice-item {
       background: rgba(255, 255, 255, 0.1);
       border-radius: 10px;
-      padding: 15px;
+      padding: 10px;
       margin: 10px 0;
     }
-    .invoice-item span {
-      font-size: 18px;
+    .invoice-item ul {
+      list-style: none;
+      padding: 0;
+    }
+    .invoice-item ul li {
+      text-align: left;
     }
     #invoiceNumber {
-      font-weight: bold;
       color: #ffdf5d;
     }
     button {
       padding: 10px 20px;
+      margin: 10px;
       background-color: #28a745;
       color: white;
       border: none;
@@ -54,33 +76,22 @@
     .back-button:hover {
       background-color: #d4ac0d;
     }
-    /* نافذة التأكيد */
-    .confirmation-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      display: none;
-      align-items: center;
-      justify-content: center;
+    .icon {
+      position: absolute;
+      font-size: 80px;
+      opacity: 0.1;
     }
-    .confirmation-modal .modal-content {
-      background-color: white;
-      color: black;
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-      width: 300px;
+    .icon1 {
+      top: 20px;
+      left: 10%;
     }
-    .confirmation-modal .modal-content button {
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      padding: 10px 20px;
-      cursor: pointer;
+    .icon2 {
+      top: 50%;
+      left: 80%;
+    }
+    .icon3 {
+      bottom: 10px;
+      right: 20%;
     }
   </style>
 </head>
@@ -88,54 +99,56 @@
 
   <h1>عرض الفاتورة</h1>
 
-  <div class="invoice-details">
-    <div class="invoice-item">
-      <span>اسم الزبون: <span id="customerName"></span></span><br>
-      <span>رقم الفاتورة: <span id="invoiceNumber"></span></span><br>
-      <span>تاريخ الإنشاء: <span id="invoiceDate"></span></span><br>
+  <div class="invoice-container">
+    <div class="invoice-header">تفاصيل الفاتورة</div>
+    <div class="invoice-details">
+      <span>اسم الزبون: <span id="customerName"></span></span>
+      <span>رقم الفاتورة: <span id="invoiceNumber"></span></span>
+      <span>تاريخ الإنشاء: <span id="invoiceDate"></span></span>
+      <span>الثمن النهائي: <span id="totalPrice"></span> درهم</span>
     </div>
-
     <div class="invoice-item">
-      <span>الألبسة المختارة:</span><br>
+      <span>الألبسة المختارة:</span>
       <ul id="selectedItemsList"></ul>
     </div>
-
-    <div class="invoice-item">
-      <span>الثمن النهائي: <span id="totalPrice"></span> درهم</span><br>
-      <span>عدد العينات: <span id="itemCount"></span></span><br>
-    </div>
+    <button class="back-button" id="backButton">الرجوع إلى صفحة التعديل</button>
+    <button id="confirmButton">التأكيد للانتقال إلى صفحة الدفع</button>
   </div>
 
-  <button class="back-button" id="backButton">الرجوع إلى صفحة التعديل</button>
-  <button id="confirmButton">التأكيد للانتقال إلى صفحة الدفع</button>
-
-  <!-- نافذة التأكيد -->
-  <div class="confirmation-modal" id="confirmationModal">
-    <div class="modal-content">
-      <p>تم حفظ الفاتورة بنجاح!</p>
-      <button id="continueButton">متابعة</button>
-    </div>
-  </div>
+  <!-- أيقونات جمالية -->
+  <i class="icon icon1">🧾</i>
+  <i class="icon icon2">📦</i>
+  <i class="icon icon3">💰</i>
 
   <script>
-    // تحميل البيانات من localStorage
-    let selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
-    let customerName = localStorage.getItem('customerName') || 'غير محدد';
-    let invoiceNumber = localStorage.getItem('invoiceNumber') || '001';
-    let totalPrice = localStorage.getItem('totalPrice') || '0';
-    let invoiceDate = new Date().toLocaleDateString('ar-MA');
-    
-    // حساب عدد العينات
-    let itemCount = selectedItems.length;
+    // استرجاع اسم الزبون من صفحة selection.html
+    const customerName = localStorage.getItem('customerName') || 'غير محدد';
+
+    // استرجاع الثمن النهائي من صفحة nextPage.html
+    const totalPrice = localStorage.getItem('totalPrice') || '0';
+
+    // استرجاع الألبسة المختارة
+    const selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
+
+    // إنشاء رقم تسلسلي للفاتورة
+    let invoiceNumber = localStorage.getItem('invoiceNumber');
+    if (!invoiceNumber) {
+      invoiceNumber = '001'; // أول فاتورة
+    } else {
+      invoiceNumber = (parseInt(invoiceNumber) + 1).toString().padStart(3, '0');
+    }
+    localStorage.setItem('invoiceNumber', invoiceNumber);
+
+    // تحديد تاريخ الفاتورة
+    const invoiceDate = new Date().toLocaleDateString('ar-MA');
 
     // تحديث واجهة المستخدم
     document.getElementById('customerName').textContent = customerName;
+    document.getElementById('totalPrice').textContent = totalPrice;
     document.getElementById('invoiceNumber').textContent = invoiceNumber;
     document.getElementById('invoiceDate').textContent = invoiceDate;
-    document.getElementById('totalPrice').textContent = totalPrice;
-    document.getElementById('itemCount').textContent = itemCount;
 
-    // عرض الألبسة المختارة
+    // عرض قائمة الألبسة المختارة
     const selectedItemsList = document.getElementById('selectedItemsList');
     selectedItems.forEach(item => {
       const li = document.createElement('li');
@@ -143,25 +156,28 @@
       selectedItemsList.appendChild(li);
     });
 
-    // التعامل مع زر الرجوع
+    // زر الرجوع
     document.getElementById('backButton').addEventListener('click', () => {
-      window.location.href = 'editInvoice.html';  // استبدل بالمسار الفعلي للصفحة السابقة
+      window.location.href = 'editInvoice.html'; // تعديل حسب المسار
     });
 
-    // التعامل مع زر التأكيد
+    // زر التأكيد
     document.getElementById('confirmButton').addEventListener('click', () => {
-      // حفظ الفاتورة
-      localStorage.setItem('invoiceDetails', JSON.stringify({
+      const invoiceData = {
         customerName,
         invoiceNumber,
         totalPrice,
-        itemCount,
         selectedItems,
         invoiceDate
-      }));
+      };
+
+      // حفظ البيانات في localStorage
+      const invoices = JSON.parse(localStorage.getItem('invoices')) || [];
+      invoices.push(invoiceData);
+      localStorage.setItem('invoices', JSON.stringify(invoices));
 
       // الانتقال إلى صفحة الدفع
-      window.location.href = 'paymentPage.html';  // استبدل بالمسار الفعلي للصفحة التالية
+      window.location.href = 'paymentPage.html'; // تعديل حسب المسار
     });
   </script>
 
