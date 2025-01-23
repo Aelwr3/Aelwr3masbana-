@@ -14,48 +14,24 @@
       background: linear-gradient(to bottom, #002b4d, #004c6d);
       color: white;
       text-align: center;
-      overflow-x: hidden;
     }
     h1 {
       font-weight: 700;
       margin: 20px;
     }
     .invoice-container {
-      position: relative;
-      padding: 20px;
       margin: 20px auto;
+      padding: 20px;
       width: 90%;
       max-width: 600px;
       background: rgba(255, 255, 255, 0.1);
       border-radius: 15px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
-    .invoice-header {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      text-align: center;
-    }
     .invoice-details span {
       display: block;
       margin: 10px 0;
       font-size: 18px;
-    }
-    .invoice-item {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      padding: 10px;
-      margin: 10px 0;
-    }
-    .invoice-item ul {
-      list-style: none;
-      padding: 0;
-    }
-    .invoice-item ul li {
-      text-align: left;
-    }
-    #invoiceNumber {
-      color: #ffdf5d;
     }
     button {
       padding: 10px 20px;
@@ -76,117 +52,68 @@
     .back-button:hover {
       background-color: #d4ac0d;
     }
-    .icon {
-      position: absolute;
-      font-size: 80px;
-      opacity: 0.1;
-    }
-    .icon1 {
-      top: 20px;
-      left: 10%;
-    }
-    .icon2 {
-      top: 50%;
-      left: 80%;
-    }
-    .icon3 {
-      bottom: 10px;
-      right: 20%;
-    }
   </style>
 </head>
 <body>
-
   <h1>عرض الفاتورة</h1>
-
   <div class="invoice-container">
-    <div class="invoice-header">تفاصيل الفاتورة</div>
     <div class="invoice-details">
       <span>اسم الزبون: <span id="customerName"></span></span>
       <span>رقم الفاتورة: <span id="invoiceNumber"></span></span>
       <span>تاريخ الإنشاء: <span id="invoiceDate"></span></span>
       <span>الثمن النهائي: <span id="totalPrice"></span> درهم</span>
     </div>
-    <div class="invoice-item">
-      <span>الألبسة المختارة:</span>
-      <ul id="selectedItemsList"></ul>
-    </div>
     <button class="back-button" id="backButton">الرجوع إلى صفحة التعديل</button>
     <button id="confirmButton">التأكيد للانتقال إلى صفحة الدفع</button>
   </div>
 
-  <!-- أيقونات جمالية -->
-  <i class="icon icon1">🧾</i>
-  <i class="icon icon2">📦</i>
-  <i class="icon icon3">💰</i>
-
   <script>
-    // استرجاع اسم الزبون من صفحة customer-selection.html
+    // استرجاع اسم الزبون من localStorage
     const customerName = localStorage.getItem('customerName') || 'غير محدد';
 
-    // استرجاع الثمن النهائي من صفحة nextPage.html
+    // استرجاع الثمن النهائي من الصفحة السابقة
     const totalPrice = localStorage.getItem('finalTotalPrice') || '0';
 
-    // استرجاع الألبسة المختارة
-    const selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
-
-    // إنشاء أو استرجاع الرقم التسلسلي للفاتورة
+    // إنشاء رقم تسلسلي للفاتورة
     let invoiceNumber = localStorage.getItem('currentInvoiceNumber');
     if (!invoiceNumber) {
       invoiceNumber = '001'; // أول فاتورة
     }
     localStorage.setItem('currentInvoiceNumber', invoiceNumber);
 
-    // عند تأكيد الفاتورة، يتم تحديث الرقم
-    const incrementInvoiceNumber = () => {
-      const nextNumber = (parseInt(invoiceNumber) + 1).toString().padStart(3, '0');
-      localStorage.setItem('currentInvoiceNumber', nextNumber);
-    };
-
-    // تحديد تاريخ الفاتورة
+    // ضبط تاريخ الفاتورة
     const invoiceDate = new Date().toLocaleDateString('ar-MA');
 
-    // تحديث واجهة المستخدم
+    // عرض البيانات في الصفحة
     document.getElementById('customerName').textContent = customerName;
     document.getElementById('totalPrice').textContent = totalPrice;
     document.getElementById('invoiceNumber').textContent = invoiceNumber;
     document.getElementById('invoiceDate').textContent = invoiceDate;
 
-    // عرض قائمة الألبسة المختارة
-    const selectedItemsList = document.getElementById('selectedItemsList');
-    selectedItems.forEach(item => {
-      const li = document.createElement('li');
-      li.textContent = `${item.quantity} × ${item.item} - ${item.price} درهم`;
-      selectedItemsList.appendChild(li);
-    });
-
-    // زر الرجوع
-    document.getElementById('backButton').addEventListener('click', () => {
-      window.location.href = 'editInvoice.html'; // تعديل حسب المسار
-    });
-
-    // زر التأكيد
+    // عند الضغط على زر "تأكيد"
     document.getElementById('confirmButton').addEventListener('click', () => {
+      const nextNumber = (parseInt(invoiceNumber) + 1).toString().padStart(3, '0');
+      localStorage.setItem('currentInvoiceNumber', nextNumber);
+
+      // حفظ البيانات الحالية للفاتورة
       const invoiceData = {
         customerName,
         invoiceNumber,
         totalPrice,
-        selectedItems,
-        invoiceDate
+        invoiceDate,
       };
-
-      // حفظ البيانات في localStorage
       const invoices = JSON.parse(localStorage.getItem('invoices')) || [];
       invoices.push(invoiceData);
       localStorage.setItem('invoices', JSON.stringify(invoices));
 
-      // تحديث الرقم التسلسلي للفاتورة
-      incrementInvoiceNumber();
-
       // الانتقال إلى صفحة الدفع
-      window.location.href = 'paymentPage.html'; // تعديل حسب المسار
+      window.location.href = 'paymentPage.html'; // تعديل المسار حسب الحاجة
+    });
+
+    // زر الرجوع
+    document.getElementById('backButton').addEventListener('click', () => {
+      window.location.href = 'editInvoice.html'; // تعديل المسار حسب الحاجة
     });
   </script>
-
 </body>
 </html>
