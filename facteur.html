@@ -94,6 +94,12 @@
         transform: perspective(800px) rotateX(10deg) translateY(0px);
       }
     }
+    .confirmation-message {
+      margin-top: 20px;
+      color: #28a745;
+      font-weight: bold;
+      font-size: 18px;
+    }
   </style>
 </head>
 <body>
@@ -127,6 +133,8 @@
 
     <button id="editButton">تعديل الفاتورة</button>
     <button id="confirmButton">تأكيد</button>
+
+    <div class="confirmation-message" id="confirmationMessage" style="display: none;">تم حفظ الفاتورة بنجاح!</div>
   </div>
 
   <script>
@@ -160,7 +168,6 @@
 
     // تحديث الرقم التسلسلي للفاتورة
     invoiceNumber++;
-    localStorage.setItem('invoiceNumber', invoiceNumber);
 
     // زر تعديل الفاتورة
     document.getElementById('editButton').addEventListener('click', () => {
@@ -169,8 +176,25 @@
 
     // زر التأكيد
     document.getElementById('confirmButton').addEventListener('click', () => {
-      alert('تم التأكيد');
-      window.location.href = 'paymentPage.html'; // الانتقال إلى صفحة الدفع
+      // حفظ بيانات الفاتورة في localStorage
+      let invoices = JSON.parse(localStorage.getItem('invoices')) || [];
+      invoices.push({
+        invoiceNumber: invoiceNumber - 1,
+        customerName: customerName,
+        date: new Date().toLocaleDateString(),
+        items: selectedItems,
+        total: totalAmount.toFixed(2)
+      });
+      localStorage.setItem('invoices', JSON.stringify(invoices));
+      localStorage.setItem('invoiceNumber', invoiceNumber);
+
+      // عرض رسالة تأكيد
+      document.getElementById('confirmationMessage').style.display = 'block';
+
+      // الانتقال إلى صفحة الدفع بعد 1.5 ثانية
+      setTimeout(() => {
+        window.location.href = 'paymentPage.html';
+      }, 1500);
     });
   </script>
 
