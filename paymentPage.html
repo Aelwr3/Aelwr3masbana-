@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>صفحة الدفع</title>
+  <title>منطقة الدفع</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
     
@@ -40,6 +40,13 @@
       margin: 10px 0;
     }
 
+    #totalContainer {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffdf5d;
+    }
+
     .confirmation-message {
       margin-top: 20px;
       color: #28a745;
@@ -68,11 +75,24 @@
     .delete-button:hover {
       background-color: #cc4c45;
     }
+
+    .input-field {
+      margin: 10px 0;
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+
+    .partial-payment-container {
+      display: none;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
 
-  <h1>صفحة الدفع</h1>
+  <h1>منطقة الدفع</h1>
 
   <div class="payment-container">
     <div class="payment-header">
@@ -83,9 +103,20 @@
 
     <div id="totalContainer">مجموع الفاتورة: <span id="totalAmount">0</span> درهم</div>
 
+    <div class="payment-status">
+      <button id="fullPaymentButton">دفع كامل</button>
+      <button id="partialPaymentButton">دفع جزئي</button>
+      <button id="unpaidButton">غير مدفوع</button>
+    </div>
+
+    <div class="partial-payment-container" id="partialPaymentContainer">
+      <label for="partialAmount">أدخل المبلغ المدفوع جزئيًا:</label>
+      <input type="number" id="partialAmount" class="input-field" placeholder="المبلغ المدفوع">
+      <button id="confirmPartialPaymentButton">تأكيد الدفع الجزئي</button>
+    </div>
+
     <div class="confirmation-message" id="confirmationMessage" style="display: none;">تم الدفع بنجاح!</div>
 
-    <button id="payButton">دفع الفاتورة</button>
     <button id="cancelButton" class="delete-button">إلغاء</button>
   </div>
 
@@ -109,32 +140,64 @@
     // عرض المجموع
     document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
 
-    // زر دفع الفاتورة
-    document.getElementById('payButton').addEventListener('click', () => {
-      // حفظ البيانات في localStorage
-      let paidInvoices = JSON.parse(localStorage.getItem('paidInvoices')) || [];
-      paidInvoices.push({
+    // حالة الدفع - دفع كامل
+    document.getElementById('fullPaymentButton').addEventListener('click', () => {
+      // حفظ حالة الدفع كدفع كامل
+      savePaymentStatus('دفع كامل');
+      showConfirmationMessage();
+    });
+
+    // حالة الدفع - دفع جزئي
+    document.getElementById('partialPaymentButton').addEventListener('click', () => {
+      document.getElementById('partialPaymentContainer').style.display = 'block';
+    });
+
+    // تأكيد الدفع الجزئي
+    document.getElementById('confirmPartialPaymentButton').addEventListener('click', () => {
+      let partialAmount = parseFloat(document.getElementById('partialAmount').value);
+      if (!isNaN(partialAmount) && partialAmount > 0) {
+        // تقليص المجموع الإجمالي بناءً على المبلغ المدفوع جزئيًا
+        totalAmount -= partialAmount;
+        savePaymentStatus('دفع جزئي');
+        showConfirmationMessage();
+      } else {
+        alert('يرجى إدخال المبلغ المدفوع بشكل صحيح');
+      }
+    });
+
+    // حالة الدفع - غير مدفوع
+    document.getElementById('unpaidButton').addEventListener('click', () => {
+      savePaymentStatus('غير مدفوع');
+      showConfirmationMessage();
+    });
+
+    // حفظ حالة الدفع في localStorage
+    function savePaymentStatus(status) {
+      let paymentStatus = {
         invoiceNumber: invoiceNumber - 1,
         customerName: customerName,
         date: new Date().toLocaleDateString(),
-        items: selectedItems,
         total: totalAmount.toFixed(2),
-        status: 'مدفوع'
-      });
-      localStorage.setItem('paidInvoices', JSON.stringify(paidInvoices));
+        status: status
+      };
+      let payments = JSON.parse(localStorage.getItem('payments')) || [];
+      payments.push(paymentStatus);
+      localStorage.setItem('payments', JSON.stringify(payments));
+    }
 
-      // عرض رسالة تأكيد الدفع
+    // عرض رسالة تأكيد الدفع
+    function showConfirmationMessage() {
       document.getElementById('confirmationMessage').style.display = 'block';
 
-      // الانتقال إلى الصفحة الرئيسية بعد 1.5 ثانية
+      // بعد 1.5 ثانية، الانتقال إلى الصفحة الأخرى (يمكنك تعديل الرابط هنا)
       setTimeout(() => {
-        window.location.href = 'index.html'; // العودة إلى الصفحة الرئيسية
-      }, 1500);
-    });
+        window.location.href = 'otherpage.html';  // استبدال 'otherpage.html' بالصفحة التي تريد الانتقال إليها
+      }, 1500);  // التأخير لمدة 1.5 ثانية
+    }
 
     // زر إلغاء
     document.getElementById('cancelButton').addEventListener('click', () => {
-      window.location.href = 'index.html'; // العودة إلى الصفحة الرئيسية في حالة الإلغاء
+      window.location.href = 'facteur.html'; // العودة إلى صفحة الفاتورة
     });
   </script>
 
