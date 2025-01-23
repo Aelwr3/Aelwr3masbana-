@@ -121,23 +121,27 @@
   <i class="icon icon3">💰</i>
 
   <script>
-    // استرجاع اسم الزبون من صفحة selection.html
+    // استرجاع اسم الزبون من صفحة customer-selection.html
     const customerName = localStorage.getItem('customerName') || 'غير محدد';
 
     // استرجاع الثمن النهائي من صفحة nextPage.html
-    const totalPrice = localStorage.getItem('totalPrice') || '0';
+    const totalPrice = localStorage.getItem('finalTotalPrice') || '0';
 
     // استرجاع الألبسة المختارة
     const selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
 
-    // إنشاء رقم تسلسلي للفاتورة
-    let invoiceNumber = localStorage.getItem('invoiceNumber');
+    // إنشاء أو استرجاع الرقم التسلسلي للفاتورة
+    let invoiceNumber = localStorage.getItem('currentInvoiceNumber');
     if (!invoiceNumber) {
       invoiceNumber = '001'; // أول فاتورة
-    } else {
-      invoiceNumber = (parseInt(invoiceNumber) + 1).toString().padStart(3, '0');
     }
-    localStorage.setItem('invoiceNumber', invoiceNumber);
+    localStorage.setItem('currentInvoiceNumber', invoiceNumber);
+
+    // عند تأكيد الفاتورة، يتم تحديث الرقم
+    const incrementInvoiceNumber = () => {
+      const nextNumber = (parseInt(invoiceNumber) + 1).toString().padStart(3, '0');
+      localStorage.setItem('currentInvoiceNumber', nextNumber);
+    };
 
     // تحديد تاريخ الفاتورة
     const invoiceDate = new Date().toLocaleDateString('ar-MA');
@@ -175,6 +179,9 @@
       const invoices = JSON.parse(localStorage.getItem('invoices')) || [];
       invoices.push(invoiceData);
       localStorage.setItem('invoices', JSON.stringify(invoices));
+
+      // تحديث الرقم التسلسلي للفاتورة
+      incrementInvoiceNumber();
 
       // الانتقال إلى صفحة الدفع
       window.location.href = 'paymentPage.html'; // تعديل حسب المسار
