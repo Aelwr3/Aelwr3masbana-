@@ -21,29 +21,46 @@
       margin: 20px;
     }
     .invoice-container {
-      perspective: 1500px;
+      width: 80%;
       margin: 20px auto;
-      width: 90%;
-      max-width: 800px;
-    }
-    .invoice {
-      transform-style: preserve-3d;
-      transform: rotateX(10deg);
-      transition: transform 0.5s ease;
-    }
-    .invoice:hover {
-      transform: rotateX(0deg);
-    }
-    .invoice-content {
-      background: rgba(255, 255, 255, 0.1);
       padding: 20px;
-      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transform: perspective(800px) rotateX(10deg);
+      animation: float 3s ease-in-out infinite;
     }
-    .invoice-content p {
-      font-size: 18px;
-      color: #ffdf5d;
+    .invoice-header {
+      margin-bottom: 30px;
+    }
+    .invoice-header p {
+      font-size: 20px;
+      margin: 10px 0;
+    }
+    .invoice-details {
+      margin-bottom: 20px;
+    }
+    table {
+      width: 95%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid white;
+    }
+    th {
+      background-color: #004c6d;
+    }
+    tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.05);
     }
     #totalContainer {
+      margin-top: 20px;
       font-size: 18px;
       font-weight: bold;
       color: #ffdf5d;
@@ -60,33 +77,31 @@
     button:hover {
       background-color: #1e7e34;
     }
-    /* نافذة التأكيد */
-    .confirmation-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
+    .delete-button {
+      background-color: #ff5e57;
+    }
+    .delete-button:hover {
+      background-color: #cc4c45;
+    }
+    .confirmation-message {
       display: none;
-      align-items: center;
-      justify-content: center;
-    }
-    .confirmation-modal .modal-content {
-      background-color: white;
-      color: black;
-      padding: 20px;
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #004c6d;
+      color: #fff;
       border-radius: 10px;
-      text-align: center;
-      width: 300px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
-    .confirmation-modal .modal-content button {
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      padding: 10px 20px;
-      cursor: pointer;
+    @keyframes float {
+      0% {
+        transform: perspective(800px) rotateX(10deg) translateY(0px);
+      }
+      50% {
+        transform: perspective(800px) rotateX(10deg) translateY(-10px);
+      }
+      100% {
+        transform: perspective(800px) rotateX(10deg) translateY(0px);
+      }
     }
   </style>
 </head>
@@ -95,68 +110,82 @@
   <h1>عرض الفاتورة</h1>
 
   <div class="invoice-container">
-    <div class="invoice">
-      <div class="invoice-content">
-        <p>اسم الزبون: <span id="customerName"></span></p>
-        <p>تاريخ الفاتورة: <span id="invoiceDate"></span></p>
-        <p>رقم الفاتورة: <span id="invoiceNumber"></span></p>
-        <p id="invoiceItems">الملابس المختارة: </p>
-        <div id="totalContainer">مجموع الفاتورة: <span id="totalAmount"></span> درهم</div>
-      </div>
+    <div class="invoice-header">
+      <p>اسم الزبون: <span id="customerName"></span></p>
+      <p>تاريخ الفاتورة: <span id="invoiceDate"></span></p>
+      <p>رقم الفاتورة: <span id="invoiceNumber"></span></p>
     </div>
-  </div>
 
-  <button id="returnButton">رجوع إلى الصفحة السابقة</button>
-  <button id="confirmButton">تأكيد</button>
+    <div class="invoice-details">
+      <table id="invoiceTable">
+        <thead>
+          <tr>
+            <th>الفئة</th>
+            <th>القطعة</th>
+            <th>الكمية</th>
+            <th>السعر</th>
+          </tr>
+        </thead>
+        <tbody id="invoiceTableBody">
+          <!-- سيتم ملء البيانات ديناميكيًا -->
+        </tbody>
+      </table>
+    </div>
 
-  <!-- نافذة التأكيد -->
-  <div class="confirmation-modal" id="confirmationModal">
-    <div class="modal-content">
-      <p>تم حفظ الفاتورة بنجاح!</p>
-      <button id="continueButton">متابعة</button>
+    <div id="totalContainer">مجموع الفاتورة: <span id="totalAmount">0</span> درهم</div>
+
+    <button id="editButton">تعديل الفاتورة</button>
+    <button id="confirmButton">تأكيد</button>
+
+    <div class="confirmation-message" id="confirmationMessage">
+      تم تأكيد الفاتورة بنجاح!
     </div>
   </div>
 
   <script>
-    // جلب اسم الزبون من localStorage
-    const customerName = localStorage.getItem('customerName');
+    // جلب البيانات من localStorage
+    let selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
+    let customerName = localStorage.getItem('customerName') || 'غير محدد';
+    let invoiceNumber = parseInt(localStorage.getItem('invoiceNumber') || '1');
+    let totalAmount = 0;
+
+    // عرض اسم الزبون وتاريخ الفاتورة ورقم الفاتورة
     document.getElementById('customerName').textContent = customerName;
-
-    // جلب تاريخ الفاتورة
-    const invoiceDate = new Date().toLocaleDateString();
-    document.getElementById('invoiceDate').textContent = invoiceDate;
-
-    // جلب رقم الفاتورة
-    let invoiceNumber = localStorage.getItem('invoiceNumber') || 1;
-    localStorage.setItem('invoiceNumber', parseInt(invoiceNumber) + 1);
+    document.getElementById('invoiceDate').textContent = new Date().toLocaleDateString();
     document.getElementById('invoiceNumber').textContent = invoiceNumber;
 
-    // جلب الملابس المختارة والمجموع من صفحة nextPage.html
-    const selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
-    const invoiceItemsContainer = document.getElementById('invoiceItems');
+    // حساب المجموع وعرض الملابس المختارة
+    const invoiceTableBody = document.getElementById('invoiceTableBody');
     selectedItems.forEach(item => {
-      invoiceItemsContainer.innerHTML += `<p>الفئة: ${item.category}, القطعة: ${item.item}, الكمية: ${item.quantity}, السعر: ${item.price} درهم</p>`;
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${item.category}</td>
+        <td>${item.item}</td>
+        <td>${item.quantity}</td>
+        <td>${(item.quantity * item.price).toFixed(2)}</td>
+      `;
+      invoiceTableBody.appendChild(row);
+      totalAmount += item.quantity * item.price;
     });
 
-    // حساب المجموع
-    const totalAmount = selectedItems.reduce((sum, item) => sum + (item.quantity * item.price || 0), 0);
+    // عرض المجموع
     document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
 
-    // زر العودة إلى الصفحة السابقة
-    document.getElementById('returnButton').addEventListener('click', () => {
-      window.location.href = 'nextPage.html';
+    // تحديث الرقم التسلسلي للفاتورة
+    invoiceNumber++;
+    localStorage.setItem('invoiceNumber', invoiceNumber);
+
+    // زر تعديل الفاتورة
+    document.getElementById('editButton').addEventListener('click', () => {
+      window.location.href = 'nextPage.html'; // العودة إلى صفحة التعديل
     });
 
-    // زر تأكيد
+    // زر التأكيد
     document.getElementById('confirmButton').addEventListener('click', () => {
-      // حفظ الفاتورة أو اتخاذ إجراءات أخرى هنا
-      document.getElementById('confirmationModal').style.display = 'flex';
-    });
-
-    // زر متابعة بعد الحفظ
-    document.getElementById('continueButton').addEventListener('click', () => {
-      document.getElementById('confirmationModal').style.display = 'none';
-      window.location.href = 'paymentPage.html'; // أو المسار الفعلي للصفحة التالية
+      document.getElementById('confirmationMessage').style.display = 'block';
+      setTimeout(() => {
+        window.location.href = 'paymentPage.html'; // الانتقال إلى صفحة الدفع
+      }, 2000); // انتظار 2 ثانية لعرض الرسالة
     });
   </script>
 
