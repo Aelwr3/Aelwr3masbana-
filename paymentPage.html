@@ -26,8 +26,6 @@
       background: rgba(255, 255, 255, 0.1);
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      transform: perspective(800px) rotateX(10deg);
-      animation: float 3s ease-in-out infinite;
     }
     .payment-details {
       margin-bottom: 20px;
@@ -55,29 +53,6 @@
     }
     .delete-button:hover {
       background-color: #cc4c45;
-    }
-    @keyframes float {
-      0% {
-        transform: perspective(800px) rotateX(10deg) translateY(0px);
-      }
-      50% {
-        transform: perspective(800px) rotateX(10deg) translateY(-10px);
-      }
-      100% {
-        transform: perspective(800px) rotateX(10deg) translateY(0px);
-      }
-    }
-    .confirmation-message {
-      margin-top: 20px;
-      color: #28a745;
-      font-weight: bold;
-      font-size: 18px;
-    }
-    .warning-message {
-      margin-top: 20px;
-      color: #ffdf5d;
-      font-weight: bold;
-      font-size: 18px;
     }
     .modal {
       display: none;
@@ -137,23 +112,17 @@
       <input type="number" id="partialAmount" placeholder="أدخل المبلغ المدفوع">
     </div>
 
-    <div class="warning-message" id="warningMessage" style="display: none;">
-      ملاحظة: بعد تأكيد الدفع، لن تتمكن من تعديل تفاصيل الفاتورة (مثل الأصناف أو الكميات أو الأسعار). يمكنك تعديل حالة الدفع فقط في حالة الدفع الجزئي إذا تم دفع باقي المبلغ في المستقبل.
-    </div>
-
     <button id="confirmButton" style="display: none;">تأكيد</button>
 
-    <div class="confirmation-message" id="confirmationMessage" style="display: none;">تم تحديث حالة الدفع بنجاح!</div>
-  </div>
-
-  <!-- Modal for warning message -->
-  <div id="warningModal" class="modal">
-    <div class="modal-content">
-      <span class="close" id="closeModal">&times;</span>
-      <p>تنبيه: بمجرد تأكيد الدفع، لن تتمكن من تعديل تفاصيل الفاتورة. يمكنك تعديل حالة الدفع فقط.</p>
-      <button id="continueButton">مواصلة</button>
-      <button id="cancelButton">إلغاء</button>
+    <div class="modal" id="warningModal">
+      <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span>
+        <p>تنبيه: بمجرد تأكيد الدفع، لن تتمكن من تعديل تفاصيل الفاتورة. يمكنك تعديل حالة الدفع فقط.</p>
+        <button id="continueButton">مواصلة</button>
+        <button id="cancelButton">إلغاء</button>
+      </div>
     </div>
+
   </div>
 
   <script>
@@ -201,8 +170,6 @@
 
     // فتح نافذة منبثقة
     function showConfirmationModal(message) {
-      document.getElementById('warningMessage').style.display = 'none';
-      document.getElementById('confirmationMessage').style.display = 'block';
       document.getElementById('warningModal').style.display = 'block';
     }
 
