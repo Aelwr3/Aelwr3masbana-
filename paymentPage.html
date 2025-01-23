@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>صفحة الدفع</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
+    
+    body {
+      font-family: 'Amiri', serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #002b4d, #004c6d);
+      color: white;
+      text-align: center;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      font-weight: 700;
+      margin: 20px;
+    }
+
+    .payment-container {
+      width: 80%;
+      margin: 20px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .payment-header {
+      margin-bottom: 30px;
+    }
+
+    .payment-header p {
+      font-size: 20px;
+      margin: 10px 0;
+    }
+
+    .confirmation-message {
+      margin-top: 20px;
+      color: #28a745;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    button {
+      padding: 8px 12px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #1e7e34;
+    }
+
+    .delete-button {
+      background-color: #ff5e57;
+    }
+
+    .delete-button:hover {
+      background-color: #cc4c45;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>صفحة الدفع</h1>
+
+  <div class="payment-container">
+    <div class="payment-header">
+      <p>اسم الزبون: <span id="customerName"></span></p>
+      <p>تاريخ الفاتورة: <span id="invoiceDate"></span></p>
+      <p>رقم الفاتورة: <span id="invoiceNumber"></span></p>
+    </div>
+
+    <div id="totalContainer">مجموع الفاتورة: <span id="totalAmount">0</span> درهم</div>
+
+    <div class="confirmation-message" id="confirmationMessage" style="display: none;">تم الدفع بنجاح!</div>
+
+    <button id="payButton">دفع الفاتورة</button>
+    <button id="cancelButton" class="delete-button">إلغاء</button>
+  </div>
+
+  <script>
+    // جلب البيانات من localStorage
+    let selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
+    let customerName = localStorage.getItem('selectedCustomer') || 'غير محدد';
+    let invoiceNumber = parseInt(localStorage.getItem('invoiceNumber') || '1');
+    let totalAmount = 0;
+
+    // عرض اسم الزبون وتاريخ الفاتورة ورقم الفاتورة
+    document.getElementById('customerName').textContent = customerName;
+    document.getElementById('invoiceDate').textContent = new Date().toLocaleDateString();
+    document.getElementById('invoiceNumber').textContent = invoiceNumber;
+
+    // حساب المجموع
+    selectedItems.forEach(item => {
+      totalAmount += item.quantity * item.price;
+    });
+
+    // عرض المجموع
+    document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
+
+    // زر دفع الفاتورة
+    document.getElementById('payButton').addEventListener('click', () => {
+      // حفظ البيانات في localStorage
+      let paidInvoices = JSON.parse(localStorage.getItem('paidInvoices')) || [];
+      paidInvoices.push({
+        invoiceNumber: invoiceNumber - 1,
+        customerName: customerName,
+        date: new Date().toLocaleDateString(),
+        items: selectedItems,
+        total: totalAmount.toFixed(2),
+        status: 'مدفوع'
+      });
+      localStorage.setItem('paidInvoices', JSON.stringify(paidInvoices));
+
+      // عرض رسالة تأكيد الدفع
+      document.getElementById('confirmationMessage').style.display = 'block';
+
+      // الانتقال إلى الصفحة الرئيسية بعد 1.5 ثانية
+      setTimeout(() => {
+        window.location.href = 'index.html'; // العودة إلى الصفحة الرئيسية
+      }, 1500);
+    });
+
+    // زر إلغاء
+    document.getElementById('cancelButton').addEventListener('click', () => {
+      window.location.href = 'index.html'; // العودة إلى الصفحة الرئيسية في حالة الإلغاء
+    });
+  </script>
+
+</body>
+</html>
