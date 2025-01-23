@@ -39,7 +39,7 @@
     tr:nth-child(even) {
       background-color: rgba(255, 255, 255, 0.05);
     }
-    input[type="number"] {
+    input[type="number"], input[type="text"] {
       width: 70px;
       padding: 5px;
       text-align: center;
@@ -114,6 +114,13 @@
   <div class="icon icon3"></div>
 
   <h1>تعديل الفاتورة</h1>
+  
+  <!-- حقل إدخال لتعديل اسم العينة -->
+  <div>
+    <label for="sampleName">اسم العينة:</label>
+    <input type="text" id="sampleName" placeholder="أدخل اسم العينة">
+  </div>
+  
   <table>
     <thead>
       <tr>
@@ -128,7 +135,9 @@
       <!-- سيتم ملء البيانات ديناميكيًا -->
     </tbody>
   </table>
+  
   <div id="totalContainer">مجموع الفاتورة: <span id="totalAmount">0</span> درهم</div>
+  
   <button id="saveButton">حفظ التعديلات</button>
 
   <script>
@@ -137,6 +146,7 @@
 
     const invoiceTable = document.getElementById('invoiceTable');
     const totalAmount = document.getElementById('totalAmount');
+    const sampleNameInput = document.getElementById('sampleName');
 
     // حساب مجموع الفاتورة
     function calculateTotal() {
@@ -200,8 +210,19 @@
 
     // حفظ التعديلات إلى localStorage
     document.getElementById('saveButton').addEventListener('click', () => {
+      // حفظ اسم العينة
+      const sampleName = sampleNameInput.value.trim();
+      if (sampleName) {
+        localStorage.setItem('sampleName', sampleName);
+      }
+      
+      // حفظ الملابس المختارة
       localStorage.setItem('selectedItems', JSON.stringify(selectedItems));
-      alert('تم حفظ التعديلات بنجاح!'); // يمكنك تحسين الرسالة لتظهر في الصفحة بشكل جمالي.
+      
+      // تحويل إلى الصفحة التالية
+      window.location.href = 'الصفحة_التالية.html';  // استبدل بالمسار الفعلي للصفحة التالية
+      
+      alert('تم حفظ التعديلات بنجاح!');
     });
   </script>
 </body>
