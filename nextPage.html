@@ -14,13 +14,14 @@
       background: linear-gradient(to bottom, #002b4d, #004c6d);
       color: white;
       text-align: center;
+      overflow-x: hidden; /* لإخفاء التمرير الأفقي */
     }
     h1 {
       font-weight: 700;
       margin: 20px;
     }
     table {
-      width: 90%;
+      width: 95%;
       margin: 20px auto;
       border-collapse: collapse;
       background-color: rgba(255, 255, 255, 0.1);
@@ -37,6 +38,14 @@
     }
     tr:nth-child(even) {
       background-color: rgba(255, 255, 255, 0.05);
+    }
+    input[type="number"] {
+      width: 70px;
+      padding: 5px;
+      text-align: center;
+      font-family: 'Amiri', serif;
+      border: 1px solid #ccc;
+      border-radius: 5px;
     }
     button {
       padding: 8px 12px;
@@ -56,9 +65,54 @@
     .delete-button:hover {
       background-color: #cc4c45;
     }
+    #totalContainer {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffdf5d;
+    }
+    /* الأيقونات العائمة */
+    .icon {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background-size: cover;
+      background-repeat: no-repeat;
+      animation: float 6s infinite ease-in-out;
+      opacity: 0.7;
+    }
+    .icon1 {
+      background-image: url('https://img.icons8.com/fluency/96/washing-machine.png');
+      top: 10%;
+      left: 5%;
+    }
+    .icon2 {
+      background-image: url('https://img.icons8.com/fluency/96/ironing.png');
+      top: 50%;
+      left: 80%;
+    }
+    .icon3 {
+      background-image: url('https://img.icons8.com/fluency/96/towel.png');
+      top: 70%;
+      left: 20%;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
   </style>
 </head>
 <body>
+  <!-- أيقونات عائمة -->
+  <div class="icon icon1"></div>
+  <div class="icon icon2"></div>
+  <div class="icon icon3"></div>
+
   <h1>تعديل الفاتورة</h1>
   <table>
     <thead>
@@ -74,6 +128,7 @@
       <!-- سيتم ملء البيانات ديناميكيًا -->
     </tbody>
   </table>
+  <div id="totalContainer">مجموع الفاتورة: <span id="totalAmount">0</span> درهم</div>
   <button id="saveButton">حفظ التعديلات</button>
 
   <script>
@@ -81,6 +136,15 @@
     let selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
 
     const invoiceTable = document.getElementById('invoiceTable');
+    const totalAmount = document.getElementById('totalAmount');
+
+    // حساب مجموع الفاتورة
+    function calculateTotal() {
+      const total = selectedItems.reduce((sum, item) => {
+        return sum + (item.quantity * item.price || 0);
+      }, 0);
+      totalAmount.textContent = total.toFixed(2);
+    }
 
     // عرض الملابس في الجدول
     function renderTable() {
@@ -105,6 +169,7 @@
           const index = e.target.getAttribute('data-index');
           selectedItems.splice(index, 1);
           renderTable(); // إعادة عرض الجدول
+          calculateTotal(); // تحديث المجموع
         });
       });
 
@@ -113,6 +178,7 @@
         input.addEventListener('input', (e) => {
           const index = e.target.getAttribute('data-index');
           selectedItems[index].quantity = parseInt(e.target.value) || 1;
+          calculateTotal(); // تحديث المجموع
         });
       });
 
@@ -121,8 +187,12 @@
         input.addEventListener('input', (e) => {
           const index = e.target.getAttribute('data-index');
           selectedItems[index].price = parseFloat(e.target.value) || 0;
+          calculateTotal(); // تحديث المجموع
         });
       });
+
+      // تحديث المجموع
+      calculateTotal();
     }
 
     // عرض الجدول عند فتح الصفحة
