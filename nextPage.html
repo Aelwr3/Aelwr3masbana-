@@ -231,6 +231,200 @@
           selectedItems[index].quantity = parseInt(e.target.value) || 1;
           calculateTotal(); // تحديث المجموع
         });
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تعديل الفاتورة</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
+    
+    body {
+      font-family: 'Amiri', serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #002b4d, #004c6d);
+      color: white;
+      text-align: center;
+      overflow-x: hidden;
+    }
+    h1 {
+      font-weight: 700;
+      margin: 20px;
+    }
+    table {
+      width: 95%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid white;
+    }
+    th {
+      background-color: #004c6d;
+    }
+    tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    input[type="number"], input[type="text"] {
+      width: 70px;
+      padding: 5px;
+      text-align: center;
+      font-family: 'Amiri', serif;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 8px 12px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #1e7e34;
+    }
+    .delete-button {
+      background-color: #ff5e57;
+    }
+    .delete-button:hover {
+      background-color: #cc4c45;
+    }
+    #totalContainer {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffdf5d;
+    }
+    /* نافذة التأكيد */
+    .confirmation-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .confirmation-modal .modal-content {
+      background-color: white;
+      color: black;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      width: 300px;
+    }
+    .confirmation-modal .modal-content button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>تعديل الفاتورة</h1>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>الفئة</th>
+        <th>القطعة</th>
+        <th>الكمية</th>
+        <th>السعر</th>
+        <th>إجراءات</th>
+      </tr>
+    </thead>
+    <tbody id="invoiceTable">
+      <!-- سيتم ملء البيانات ديناميكيًا -->
+    </tbody>
+  </table>
+  
+  <div id="totalContainer">مجموع الفاتورة: <span id="totalAmount">0</span> درهم</div>
+  
+  <button id="saveButton">حفظ التعديلات</button>
+
+  <!-- نافذة التأكيد -->
+  <div class="confirmation-modal" id="confirmationModal">
+    <div class="modal-content">
+      <p>تم حفظ التعديلات بنجاح!</p>
+      <button id="continueButton">متابعة</button>
+    </div>
+  </div>
+
+  <script>
+    // تحميل الملابس المختارة من localStorage
+    let selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
+
+    const invoiceTable = document.getElementById('invoiceTable');
+    const totalAmount = document.getElementById('totalAmount');
+    const confirmationModal = document.getElementById('confirmationModal');
+    const continueButton = document.getElementById('continueButton');
+
+    // حساب مجموع الفاتورة
+    function calculateTotal() {
+      const total = selectedItems.reduce((sum, item) => {
+        return sum + (item.quantity * item.price || 0);
+      }, 0);
+      totalAmount.textContent = total.toFixed(2);
+    }
+
+    // عرض الملابس في الجدول
+    function renderTable() {
+      invoiceTable.innerHTML = '';
+      selectedItems.forEach((item, index) => {
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+          <td>${item.category}</td>
+          <td><input type="text" value="${item.item || ''}" data-index="${index}" class="item-input"></td>
+          <td><input type="number" min="1" value="${item.quantity || 1}" data-index="${index}" class="quantity-input"></td>
+          <td><input type="number" min="0" value="${item.price || 0}" data-index="${index}" class="price-input"></td>
+          <td><button class="delete-button" data-index="${index}">حذف</button></td>
+        `;
+        
+        invoiceTable.appendChild(row);
+      });
+
+      // إضافة حدث الحذف
+      document.querySelectorAll('.delete-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+          const index = e.target.getAttribute('data-index');
+          selectedItems.splice(index, 1);
+          renderTable(); // إعادة عرض الجدول
+          calculateTotal(); // تحديث المجموع
+        });
+      });
+
+      // تحديث اسم القطعة
+      document.querySelectorAll('.item-input').forEach(input => {
+        input.addEventListener('input', (e) => {
+          const index = e.target.getAttribute('data-index');
+          selectedItems[index].item = e.target.value;
+          calculateTotal(); // تحديث المجموع
+        });
+      });
+
+      // تحديث الكمية
+      document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('input', (e) => {
+          const index = e.target.getAttribute('data-index');
+          selectedItems[index].quantity = parseInt(e.target.value) || 1;
+          calculateTotal(); // تحديث المجموع
+        });
       });
 
       // تحديث السعر
@@ -262,3 +456,7 @@
     continueButton.addEventListener('click', () => {
       confirmationModal.style.display = 'none';
       window.location.href = 'facteur.html';  // استبدل بالمسار الفعلي للصفحة التالية
+    });
+  </script>
+</body>
+</html>
