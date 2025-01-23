@@ -1,212 +1,137 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>تعديل الفاتورة</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
-
+    
     body {
+      font-family: 'Amiri', serif;
       margin: 0;
-      font-family: 'Amiri', serif;
-      background: linear-gradient(135deg, #002b4d, #004c6d);
-      overflow: hidden;
-      color: #fff;
+      padding: 0;
+      background: linear-gradient(to bottom, #002b4d, #004c6d);
+      color: white;
       text-align: center;
     }
-
-    .floating-icons {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
-
-    .floating-icons img {
-      position: absolute;
-      width: 80px;
-      animation: float 8s infinite;
-    }
-
-    @keyframes float {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-      100% { transform: translateY(0); }
-    }
-
-    .container {
-      margin-top: 50px;
-    }
-
     h1 {
-      font-size: 2.5em;
       font-weight: 700;
-    }
-
-    .table-container {
-      margin: 20px auto;
-      max-width: 800px;
-      background-color: rgba(0, 43, 77, 0.8);
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 1.1em;
-    }
-
-    table th, table td {
-      padding: 15px;
-      text-align: center;
-      border: 1px solid #fff;
-      color: #fff;
-    }
-
-    table th {
-      background-color: #004c6d;
-    }
-
-    table input {
-      width: 80%;
-      padding: 5px;
-      font-size: 1.1em;
-      font-family: 'Amiri', serif;
-      border-radius: 5px;
-      border: none;
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      text-align: center;
-    }
-
-    table input:focus {
-      outline: none;
-      border: 1px solid #008f39;
-    }
-
-    .btn {
-      display: inline-block;
       margin: 20px;
-      padding: 10px 20px;
+    }
+    table {
+      width: 90%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid white;
+    }
+    th {
       background-color: #004c6d;
-      color: #fff;
-      font-size: 1.3em;
-      font-family: 'Amiri', serif;
+    }
+    tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    button {
+      padding: 8px 12px;
+      background-color: #28a745;
+      color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
       transition: background-color 0.3s;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
-
-    .btn:hover {
-      background-color: #0077a3;
+    button:hover {
+      background-color: #1e7e34;
     }
-
-    .confirm-btn {
-      background-color: #008f39;
+    .delete-button {
+      background-color: #ff5e57;
     }
-
-    .confirm-btn:hover {
-      background-color: #00b94e;
-    }
-
-    .confirm-btn:active {
-      box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.3);
+    .delete-button:hover {
+      background-color: #cc4c45;
     }
   </style>
 </head>
 <body>
-  <div class="floating-icons">
-    <img src="https://cdn-icons-png.flaticon.com/512/5455/5455723.png" style="top: 10%; left: 20%;">
-    <img src="https://cdn-icons-png.flaticon.com/512/18653/18653528.png" style="top: 40%; left: 70%;">
-    <img src="https://cdn-icons-png.flaticon.com/512/9119/9119160.png" style="top: 70%; left: 30%;">
-  </div>
-
-  <div class="container">
-    <h1>تعديل الفاتورة</h1>
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>اسم العينة</th>
-            <th>عدد القطع</th>
-            <th>الثمن</th>
-            <th>المجموع</th>
-          </tr>
-        </thead>
-        <tbody id="invoiceTable">
-          <!-- البيانات سيتم إضافتها هنا -->
-        </tbody>
-      </table>
-    </div>
-    <button class="btn confirm-btn" id="confirmInvoice">تأكيد</button>
-  </div>
+  <h1>تعديل الفاتورة</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>الفئة</th>
+        <th>القطعة</th>
+        <th>الكمية</th>
+        <th>السعر</th>
+        <th>إجراءات</th>
+      </tr>
+    </thead>
+    <tbody id="invoiceTable">
+      <!-- سيتم ملء البيانات ديناميكيًا -->
+    </tbody>
+  </table>
+  <button id="saveButton">حفظ التعديلات</button>
 
   <script>
-    // التأكد من وجود البيانات
-    const invoiceData = JSON.parse(localStorage.getItem("selectedItems"));
-    const tableBody = document.getElementById("invoiceTable");
+    // تحميل الملابس المختارة من localStorage
+    let selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
 
-    if (!invoiceData || invoiceData.length === 0) {
-      const noDataMessage = document.createElement("p");
-      noDataMessage.textContent = "لا توجد بيانات لتحميلها. يرجى العودة واختيار الملابس.";
-      noDataMessage.style.fontSize = "1.5em";
-      noDataMessage.style.marginTop = "30px";
-      document.body.appendChild(noDataMessage);
-    } else {
-      populateTable();
-    }
+    const invoiceTable = document.getElementById('invoiceTable');
 
-    // عرض البيانات في الجدول
-    function populateTable() {
-      tableBody.innerHTML = "";
-      invoiceData.forEach((item, index) => {
-        const row = document.createElement("tr");
+    // عرض الملابس في الجدول
+    function renderTable() {
+      invoiceTable.innerHTML = '';
+      selectedItems.forEach((item, index) => {
+        const row = document.createElement('tr');
+        
         row.innerHTML = `
-          <td>${item.name}</td>
-          <td><input type="number" value="${item.quantity}" min="1" data-index="${index}" class="quantity-input"></td>
-          <td><input type="number" value="${item.price}" min="0" data-index="${index}" class="price-input"></td>
-          <td>${(item.quantity * item.price).toFixed(2)} DH</td>
+          <td>${item.category}</td>
+          <td>${item.item}</td>
+          <td><input type="number" min="1" value="${item.quantity || 1}" data-index="${index}" class="quantity-input"></td>
+          <td><input type="number" min="0" value="${item.price || 0}" data-index="${index}" class="price-input"></td>
+          <td><button class="delete-button" data-index="${index}">حذف</button></td>
         `;
-        tableBody.appendChild(row);
+        
+        invoiceTable.appendChild(row);
+      });
+
+      // إضافة حدث الحذف
+      document.querySelectorAll('.delete-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+          const index = e.target.getAttribute('data-index');
+          selectedItems.splice(index, 1);
+          renderTable(); // إعادة عرض الجدول
+        });
+      });
+
+      // تحديث الكمية
+      document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('input', (e) => {
+          const index = e.target.getAttribute('data-index');
+          selectedItems[index].quantity = parseInt(e.target.value) || 1;
+        });
+      });
+
+      // تحديث السعر
+      document.querySelectorAll('.price-input').forEach(input => {
+        input.addEventListener('input', (e) => {
+          const index = e.target.getAttribute('data-index');
+          selectedItems[index].price = parseFloat(e.target.value) || 0;
+        });
       });
     }
 
-    // تحديث بيانات الفاتورة عند تغيير القيم
-    document.addEventListener("input", (event) => {
-      const index = event.target.getAttribute("data-index");
-      if (event.target.classList.contains("quantity-input")) {
-        invoiceData[index].quantity = +event.target.value;
-      } else if (event.target.classList.contains("price-input")) {
-        invoiceData[index].price = +event.target.value;
-      }
-      localStorage.setItem("selectedItems", JSON.stringify(invoiceData));
-      populateTable();
-    });
+    // عرض الجدول عند فتح الصفحة
+    renderTable();
 
-    // تأكيد الفاتورة
-    document.getElementById("confirmInvoice").addEventListener("click", () => {
-      const confirmationMessage = document.createElement("div");
-      confirmationMessage.style.position = "fixed";
-      confirmationMessage.style.top = "50%";
-      confirmationMessage.style.left = "50%";
-      confirmationMessage.style.transform = "translate(-50%, -50%)";
-      confirmationMessage.style.background = "#008f39";
-      confirmationMessage.style.color = "#fff";
-      confirmationMessage.style.padding = "20px";
-      confirmationMessage.style.borderRadius = "10px";
-      confirmationMessage.style.boxShadow = "0 0 15px rgba(0,0,0,0.5)";
-      confirmationMessage.style.zIndex = "1000";
-      confirmationMessage.textContent = "تم تأكيد الفاتورة بنجاح!";
-      document.body.appendChild(confirmationMessage);
-      setTimeout(() => {
-        confirmationMessage.remove();
-        window.location.href = "next-page.html"; // استبدل بالرابط الصحيح
-      }, 2000);
+    // حفظ التعديلات إلى localStorage
+    document.getElementById('saveButton').addEventListener('click', () => {
+      localStorage.setItem('selectedItems', JSON.stringify(selectedItems));
+      alert('تم حفظ التعديلات بنجاح!'); // يمكنك تحسين الرسالة لتظهر في الصفحة بشكل جمالي.
     });
   </script>
 </body>
