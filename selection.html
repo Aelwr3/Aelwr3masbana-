@@ -73,6 +73,85 @@
       background-color: rgba(255, 255, 255, 0.1);
       border-radius: 10px;
     }
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>اختيار الملابس</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
+    
+    body {
+      font-family: 'Amiri', serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #002b4d, #004c6d);
+      color: white;
+      text-align: center;
+    }
+    h1, h2, h3 {
+      font-weight: 700;
+      margin: 20px 0;
+    }
+    #categoryButton {
+      background-color: #008cba;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    #categoryButton:hover {
+      background-color: #005f7a;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #f9f9f9;
+      color: black;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+    }
+    .modal button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      background-color: #ff5e57;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .category-buttons {
+      margin: 20px 0;
+    }
+    .category-buttons button {
+      background-color: #008cba;
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      margin: 5px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .category-buttons button:hover {
+      background-color: #005f7a;
+    }
+    #selectedItems {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
     #selectedItems ul {
       list-style-type: none;
       padding: 0;
@@ -89,6 +168,7 @@
       border-radius: 20px;
       font-size: 18px;
       cursor: pointer;
+      transition: background-color 0.3s;
     }
     #confirmButton:hover {
       background-color: #1e7e34;
@@ -109,7 +189,7 @@
     <button id="closeModal">إغلاق</button>
   </div>
   <div id="itemsModal" class="modal">
-    <h2>ملابس مختارة:</h2>
+    <h2>اختر الملابس</h2>
     <div class="category-buttons" id="itemsContainer">
       <!-- سيتم إضافة الأزرار هنا ديناميكياً -->
     </div>
