@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>عرض الفاتورة</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
+    
+    body {
+      font-family: 'Amiri', serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #002b4d, #004c6d);
+      color: white;
+      text-align: center;
+      overflow-x: hidden;
+    }
+    h1 {
+      font-weight: 700;
+      margin: 20px;
+    }
+    .invoice-details {
+      margin-top: 30px;
+    }
+    .invoice-item {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px 0;
+    }
+    .invoice-item span {
+      font-size: 18px;
+    }
+    #invoiceNumber {
+      font-weight: bold;
+      color: #ffdf5d;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #1e7e34;
+    }
+    .back-button {
+      background-color: #f1c40f;
+    }
+    .back-button:hover {
+      background-color: #d4ac0d;
+    }
+    /* نافذة التأكيد */
+    .confirmation-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .confirmation-modal .modal-content {
+      background-color: white;
+      color: black;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      width: 300px;
+    }
+    .confirmation-modal .modal-content button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>عرض الفاتورة</h1>
+
+  <div class="invoice-details">
+    <div class="invoice-item">
+      <span>اسم الزبون: <span id="customerName"></span></span><br>
+      <span>رقم الفاتورة: <span id="invoiceNumber"></span></span><br>
+      <span>تاريخ الإنشاء: <span id="invoiceDate"></span></span><br>
+    </div>
+
+    <div class="invoice-item">
+      <span>الألبسة المختارة:</span><br>
+      <ul id="selectedItemsList"></ul>
+    </div>
+
+    <div class="invoice-item">
+      <span>الثمن النهائي: <span id="totalPrice"></span> درهم</span><br>
+      <span>عدد العينات: <span id="itemCount"></span></span><br>
+    </div>
+  </div>
+
+  <button class="back-button" id="backButton">الرجوع إلى صفحة التعديل</button>
+  <button id="confirmButton">التأكيد للانتقال إلى صفحة الدفع</button>
+
+  <!-- نافذة التأكيد -->
+  <div class="confirmation-modal" id="confirmationModal">
+    <div class="modal-content">
+      <p>تم حفظ الفاتورة بنجاح!</p>
+      <button id="continueButton">متابعة</button>
+    </div>
+  </div>
+
+  <script>
+    // تحميل البيانات من localStorage
+    let selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
+    let customerName = localStorage.getItem('customerName') || 'غير محدد';
+    let invoiceNumber = localStorage.getItem('invoiceNumber') || '001';
+    let totalPrice = localStorage.getItem('totalPrice') || '0';
+    let invoiceDate = new Date().toLocaleDateString('ar-MA');
+    
+    // حساب عدد العينات
+    let itemCount = selectedItems.length;
+
+    // تحديث واجهة المستخدم
+    document.getElementById('customerName').textContent = customerName;
+    document.getElementById('invoiceNumber').textContent = invoiceNumber;
+    document.getElementById('invoiceDate').textContent = invoiceDate;
+    document.getElementById('totalPrice').textContent = totalPrice;
+    document.getElementById('itemCount').textContent = itemCount;
+
+    // عرض الألبسة المختارة
+    const selectedItemsList = document.getElementById('selectedItemsList');
+    selectedItems.forEach(item => {
+      const li = document.createElement('li');
+      li.textContent = `${item.quantity} × ${item.item} - ${item.price} درهم`;
+      selectedItemsList.appendChild(li);
+    });
+
+    // التعامل مع زر الرجوع
+    document.getElementById('backButton').addEventListener('click', () => {
+      window.location.href = 'editInvoice.html';  // استبدل بالمسار الفعلي للصفحة السابقة
+    });
+
+    // التعامل مع زر التأكيد
+    document.getElementById('confirmButton').addEventListener('click', () => {
+      // حفظ الفاتورة
+      localStorage.setItem('invoiceDetails', JSON.stringify({
+        customerName,
+        invoiceNumber,
+        totalPrice,
+        itemCount,
+        selectedItems,
+        invoiceDate
+      }));
+
+      // الانتقال إلى صفحة الدفع
+      window.location.href = 'paymentPage.html';  // استبدل بالمسار الفعلي للصفحة التالية
+    });
+  </script>
+
+</body>
+</html>
