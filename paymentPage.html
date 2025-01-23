@@ -6,7 +6,6 @@
   <title>صفحة الدفع</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
-
     body {
       font-family: 'Amiri', serif;
       margin: 0;
@@ -16,12 +15,10 @@
       text-align: center;
       overflow-x: hidden;
     }
-
     h1 {
       font-weight: 700;
       margin: 20px;
     }
-
     .payment-container {
       width: 80%;
       margin: 20px auto;
@@ -32,18 +29,15 @@
       transform: perspective(800px) rotateX(10deg);
       animation: float 3s ease-in-out infinite;
     }
-
     .payment-details {
       margin-bottom: 20px;
     }
-
     #totalAmount {
       font-size: 20px;
       margin-top: 10px;
       font-weight: bold;
       color: #ffdf5d;
     }
-
     button {
       padding: 8px 12px;
       background-color: #28a745;
@@ -53,19 +47,15 @@
       cursor: pointer;
       transition: background-color 0.3s;
     }
-
     button:hover {
       background-color: #1e7e34;
     }
-
     .delete-button {
       background-color: #ff5e57;
     }
-
     .delete-button:hover {
       background-color: #cc4c45;
     }
-
     @keyframes float {
       0% {
         transform: perspective(800px) rotateX(10deg) translateY(0px);
@@ -77,19 +67,48 @@
         transform: perspective(800px) rotateX(10deg) translateY(0px);
       }
     }
-
     .confirmation-message {
       margin-top: 20px;
       color: #28a745;
       font-weight: bold;
       font-size: 18px;
     }
-
     .warning-message {
       margin-top: 20px;
       color: #ffdf5d;
       font-weight: bold;
       font-size: 18px;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+      padding-top: 60px;
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 400px;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -110,6 +129,12 @@
     <div>
       <button id="payFull">دفع كامل</button>
       <button id="payPartial">دفع جزئي</button>
+      <button id="payUnpaid">غير مدفوع</button>
+    </div>
+
+    <div id="partialAmountContainer" style="display: none;">
+      <label for="partialAmount">المبلغ المدفوع:</label>
+      <input type="number" id="partialAmount" placeholder="أدخل المبلغ المدفوع">
     </div>
 
     <div class="warning-message" id="warningMessage" style="display: none;">
@@ -121,56 +146,80 @@
     <div class="confirmation-message" id="confirmationMessage" style="display: none;">تم تحديث حالة الدفع بنجاح!</div>
   </div>
 
+  <!-- Modal for warning message -->
+  <div id="warningModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closeModal">&times;</span>
+      <p>تنبيه: بمجرد تأكيد الدفع، لن تتمكن من تعديل تفاصيل الفاتورة. يمكنك تعديل حالة الدفع فقط.</p>
+      <button id="continueButton">مواصلة</button>
+      <button id="cancelButton">إلغاء</button>
+    </div>
+  </div>
+
   <script>
     // جلب البيانات من localStorage
     let customerName = localStorage.getItem('selectedCustomer') || 'غير محدد';
-    let invoiceNumber = localStorage.getItem('invoiceNumber') || '1';
+    let invoiceNumber = parseInt(localStorage.getItem('invoiceNumber') || '6325'); // هنا جلبنا الرقم من localStorage
     let totalAmount = parseFloat(localStorage.getItem('totalAmount') || '0');
     
     // عرض التفاصيل على الصفحة
     document.getElementById('customerName').textContent = customerName;
-    document.getElementById('invoiceNumber').textContent = invoiceNumber;
-    document.getElementById('invoiceDate').textContent = new Date().toLocaleDateString();
-    document.getElementById('totalAmountValue').textContent = totalAmount.toFixed(2);
+    document.getElementById('invoiceNumber').textContent = invoiceNumber; // عرض رقم الفاتورة هنا
+    document.getElementById('invoiceDate').textContent = new Date().toLocaleDateString('ar-SA');
+    document.getElementById('totalAmountValue').textContent = totalAmount;
 
-    // تحديد زر الدفع
-    document.getElementById('payFull').addEventListener('click', () => {
+    // إظهار خيارات الدفع
+    document.getElementById('payFull').onclick = function() {
       document.getElementById('paymentStatus').textContent = 'مدفوع بالكامل';
-      document.getElementById('warningMessage').style.display = 'block';
+      localStorage.setItem('paymentStatus', 'مدفوع بالكامل');
+      showConfirmationModal('تم الدفع بالكامل');
+    };
+
+    document.getElementById('payPartial').onclick = function() {
+      document.getElementById('partialAmountContainer').style.display = 'block';
       document.getElementById('confirmButton').style.display = 'inline-block';
-    });
+    };
 
-    document.getElementById('payPartial').addEventListener('click', () => {
-      document.getElementById('paymentStatus').textContent = 'دفع جزئي';
-      document.getElementById('warningMessage').style.display = 'block';
-      document.getElementById('confirmButton').style.display = 'inline-block';
-    });
+    document.getElementById('payUnpaid').onclick = function() {
+      document.getElementById('paymentStatus').textContent = 'غير مدفوع';
+      localStorage.setItem('paymentStatus', 'غير مدفوع');
+      showConfirmationModal('لم يتم الدفع');
+    };
 
-    // عند الضغط على زر التأكيد
-    document.getElementById('confirmButton').addEventListener('click', () => {
-      let paymentStatus = document.getElementById('paymentStatus').textContent;
-      
-      // حفظ حالة الدفع في localStorage
-      let invoices = JSON.parse(localStorage.getItem('invoices')) || [];
-      let currentInvoice = {
-        invoiceNumber: invoiceNumber,
-        customerName: customerName,
-        date: new Date().toLocaleDateString(),
-        totalAmount: totalAmount.toFixed(2),
-        paymentStatus: paymentStatus
-      };
-      invoices.push(currentInvoice);
-      localStorage.setItem('invoices', JSON.stringify(invoices));
+    // إضافة المبلغ المدفوع جزئيا
+    document.getElementById('confirmButton').onclick = function() {
+      let partialAmount = parseFloat(document.getElementById('partialAmount').value);
+      if (partialAmount > 0 && partialAmount < totalAmount) {
+        let remainingAmount = totalAmount - partialAmount;
+        document.getElementById('paymentStatus').textContent = `تم الدفع جزئيا: ${partialAmount} درهم (المتبقي: ${remainingAmount} درهم)`;
+        localStorage.setItem('paymentStatus', `تم الدفع جزئيا: ${partialAmount} درهم`);
+        showConfirmationModal('تم الدفع جزئيا');
+      } else {
+        alert('يرجى إدخال مبلغ صحيح للدفع الجزئي');
+      }
+    };
 
-      // عرض رسالة تأكيد
+    // فتح نافذة منبثقة
+    function showConfirmationModal(message) {
+      document.getElementById('warningMessage').style.display = 'none';
       document.getElementById('confirmationMessage').style.display = 'block';
+      document.getElementById('warningModal').style.display = 'block';
+    }
 
-      // الانتقال إلى الصفحة التالية بعد 1.5 ثانية
-      setTimeout(() => {
-        window.location.href = 'nextPage.html'; // انتقل إلى الصفحة التالية
-      }, 1500);
-    });
+    // إغلاق نافذة منبثقة
+    document.getElementById('closeModal').onclick = function() {
+      document.getElementById('warningModal').style.display = 'none';
+    };
+
+    document.getElementById('continueButton').onclick = function() {
+      // الانتقال إلى الصفحة التالية أو إغلاق النافذة المنبثقة
+      window.location.href = 'nextPage.html'; // هنا يمكن تغيير الرابط للصفحة التالية
+    };
+
+    document.getElementById('cancelButton').onclick = function() {
+      // إغلاق النافذة المنبثقة
+      document.getElementById('warningModal').style.display = 'none';
+    };
   </script>
-
 </body>
 </html>
