@@ -14,7 +14,7 @@
       background: linear-gradient(to bottom, #002b4d, #004c6d);
       color: white;
       text-align: center;
-      overflow-x: hidden; /* لإخفاء التمرير الأفقي */
+      overflow-x: hidden;
     }
     h1 {
       font-weight: 700;
@@ -105,6 +105,35 @@
         transform: translateY(-20px);
       }
     }
+
+    /* نافذة التأكيد */
+    .confirmation-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .confirmation-modal .modal-content {
+      background-color: white;
+      color: black;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      width: 300px;
+    }
+    .confirmation-modal .modal-content button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -114,12 +143,6 @@
   <div class="icon icon3"></div>
 
   <h1>تعديل الفاتورة</h1>
-  
-  <!-- حقل إدخال لتعديل اسم العينة -->
-  <div>
-    <label for="sampleName">اسم العينة:</label>
-    <input type="text" id="sampleName" placeholder="أدخل اسم العينة">
-  </div>
   
   <table>
     <thead>
@@ -140,13 +163,22 @@
   
   <button id="saveButton">حفظ التعديلات</button>
 
+  <!-- نافذة التأكيد -->
+  <div class="confirmation-modal" id="confirmationModal">
+    <div class="modal-content">
+      <p>تم حفظ التعديلات بنجاح!</p>
+      <button id="continueButton">متابعة</button>
+    </div>
+  </div>
+
   <script>
     // تحميل الملابس المختارة من localStorage
     let selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
 
     const invoiceTable = document.getElementById('invoiceTable');
     const totalAmount = document.getElementById('totalAmount');
-    const sampleNameInput = document.getElementById('sampleName');
+    const confirmationModal = document.getElementById('confirmationModal');
+    const continueButton = document.getElementById('continueButton');
 
     // حساب مجموع الفاتورة
     function calculateTotal() {
@@ -164,7 +196,7 @@
         
         row.innerHTML = `
           <td>${item.category}</td>
-          <td>${item.item}</td>
+          <td><input type="text" value="${item.item || ''}" data-index="${index}" class="item-input"></td>
           <td><input type="number" min="1" value="${item.quantity || 1}" data-index="${index}" class="quantity-input"></td>
           <td><input type="number" min="0" value="${item.price || 0}" data-index="${index}" class="price-input"></td>
           <td><button class="delete-button" data-index="${index}">حذف</button></td>
@@ -179,6 +211,15 @@
           const index = e.target.getAttribute('data-index');
           selectedItems.splice(index, 1);
           renderTable(); // إعادة عرض الجدول
+          calculateTotal(); // تحديث المجموع
+        });
+      });
+
+      // تحديث اسم القطعة
+      document.querySelectorAll('.item-input').forEach(input => {
+        input.addEventListener('input', (e) => {
+          const index = e.target.getAttribute('data-index');
+          selectedItems[index].item = e.target.value;
           calculateTotal(); // تحديث المجموع
         });
       });
@@ -210,20 +251,14 @@
 
     // حفظ التعديلات إلى localStorage
     document.getElementById('saveButton').addEventListener('click', () => {
-      // حفظ اسم العينة
-      const sampleName = sampleNameInput.value.trim();
-      if (sampleName) {
-        localStorage.setItem('sampleName', sampleName);
-      }
-      
       // حفظ الملابس المختارة
       localStorage.setItem('selectedItems', JSON.stringify(selectedItems));
       
-      // تحويل إلى الصفحة التالية
-      window.location.href = 'الصفحة_التالية.html';  // استبدل بالمسار الفعلي للصفحة التالية
-      
-      alert('تم حفظ التعديلات بنجاح!');
+      // عرض نافذة التأكيد
+      confirmationModal.style.display = 'flex';
     });
-  </script>
-</body>
-</html>
+
+    // الانتقال إلى الصفحة التالية بعد تأكيد الحفظ
+    continueButton.addEventListener('click', () => {
+      confirmationModal.style.display = 'none';
+      window.location.href = 'facteur.html';  // استبدل بالمسار الفعلي للصفحة التالية
