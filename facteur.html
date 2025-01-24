@@ -6,7 +6,6 @@
   <title>عرض الفاتورة</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
-    
     body {
       font-family: 'Amiri', serif;
       margin: 0;
@@ -103,16 +102,13 @@
   </style>
 </head>
 <body>
-
   <h1>عرض الفاتورة</h1>
-
   <div class="invoice-container">
     <div class="invoice-header">
       <p>اسم الزبون: <span id="customerName"></span></p>
       <p>تاريخ الفاتورة: <span id="invoiceDate"></span></p>
       <p>رقم الفاتورة: <span id="invoiceNumber"></span></p>
     </div>
-
     <div class="invoice-details">
       <table id="invoiceTable">
         <thead>
@@ -175,14 +171,22 @@
     document.getElementById('confirmButton').addEventListener('click', () => {
       // حفظ بيانات الفاتورة في localStorage
       let invoices = JSON.parse(localStorage.getItem('invoices')) || [];
-      invoices.push({
+      
+      // كائن الفاتورة
+      const invoiceData = {
         invoiceNumber: invoiceNumber, // نستخدم الرقم الحالي
         customerName: customerName,
         date: new Date().toLocaleDateString(),
         items: selectedItems,
         total: totalAmount.toFixed(2)
-      });
+      };
+
+      // إضافة الفاتورة للمصفوفة أو إنشاء جديدة إذا لم تكن موجودة
+      invoices.push(invoiceData);
       localStorage.setItem('invoices', JSON.stringify(invoices));
+
+      // حفظ الفاتورة تحت رقم الفاتورة في localStorage
+      localStorage.setItem(invoiceNumber.toString(), JSON.stringify(invoiceData));
 
       // تحديث الرقم التسلسلي وحفظه في localStorage
       invoiceNumber++;
@@ -197,6 +201,5 @@
       }, 1500);
     });
   </script>
-
 </body>
 </html>
