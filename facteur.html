@@ -166,9 +166,6 @@
     // عرض المجموع
     document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
 
-    // تحديث الرقم التسلسلي للفاتورة
-    invoiceNumber++;
-
     // زر تعديل الفاتورة
     document.getElementById('editButton').addEventListener('click', () => {
       window.location.href = 'nextPage.html'; // العودة إلى صفحة التعديل
@@ -179,13 +176,16 @@
       // حفظ بيانات الفاتورة في localStorage
       let invoices = JSON.parse(localStorage.getItem('invoices')) || [];
       invoices.push({
-        invoiceNumber: invoiceNumber - 1,
+        invoiceNumber: invoiceNumber, // نستخدم الرقم الحالي
         customerName: customerName,
         date: new Date().toLocaleDateString(),
         items: selectedItems,
         total: totalAmount.toFixed(2)
       });
       localStorage.setItem('invoices', JSON.stringify(invoices));
+
+      // تحديث الرقم التسلسلي وحفظه في localStorage
+      invoiceNumber++;
       localStorage.setItem('invoiceNumber', invoiceNumber);
 
       // عرض رسالة تأكيد
