@@ -5,55 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>منطقة الدفع</title>
   <style>
+    /* أساليب التصميم مشابهة للصفحات السابقة */
     @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
-    
     body {
       font-family: 'Amiri', serif;
-      margin: 0;
-      padding: 0;
       background: linear-gradient(to bottom, #002b4d, #004c6d);
       color: white;
       text-align: center;
-      overflow-x: hidden;
     }
-
     h1 {
       font-weight: 700;
       margin: 20px;
     }
-
     .payment-container {
-      width: 80%;
-      margin: 20px auto;
-      padding: 20px;
       background: rgba(255, 255, 255, 0.1);
+      margin: 30px auto;
+      padding: 20px;
+      width: 80%;
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
-
-    .payment-header {
-      margin-bottom: 30px;
-    }
-
-    .payment-header p {
-      font-size: 20px;
-      margin: 10px 0;
-    }
-
-    #totalContainer {
-      margin-top: 20px;
-      font-size: 18px;
-      font-weight: bold;
-      color: #ffdf5d;
-    }
-
-    .confirmation-message {
-      margin-top: 20px;
-      color: #28a745;
-      font-weight: bold;
-      font-size: 18px;
-    }
-
     button {
       padding: 8px 12px;
       background-color: #28a745;
@@ -61,32 +32,24 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      transition: background-color 0.3s;
     }
-
     button:hover {
       background-color: #1e7e34;
     }
-
-    .delete-button {
+    .cancel-button {
       background-color: #ff5e57;
     }
-
-    .delete-button:hover {
+    .cancel-button:hover {
       background-color: #cc4c45;
     }
-
-    .input-field {
-      margin: 10px 0;
-      padding: 8px;
-      border-radius: 5px;
-      border: none;
-      font-size: 16px;
-    }
-
-    .partial-payment-container {
+    #partialPaymentContainer {
       display: none;
       margin-top: 20px;
+    }
+    .confirmation-message {
+      margin-top: 20px;
+      color: #28a745;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -95,382 +58,83 @@
   <h1>منطقة الدفع</h1>
 
   <div class="payment-container">
-    <div class="payment-header">
-      <p>اسم الزبون: <span id="customerName"></span></p>
-      <p>تاريخ الفاتورة: <span id="invoiceDate"></span></p>
-      <p>رقم الفاتورة: <span id="invoiceNumber"></span></p>
+    <p>اسم الزبون: <span id="customerName"></span></p>
+    <p>رقم الفاتورة: <span id="invoiceNumber"></span></p>
+    <p>تاريخ الفاتورة: <span id="invoiceDate"></span></p>
+    <p>المجموع الكلي: <span id="totalAmount"></span> درهم</p>
+
+    <div id="partialPaymentContainer">
+      <label for="partialAmount">المبلغ المدفوع مسبقًا:</label>
+      <input type="number" id="partialAmount" placeholder="أدخل المبلغ المدفوع" />
     </div>
 
-    <div id="totalContainer">مجموع الفاتورة: <span id="totalAmount">0</span> درهم</div>
+    <button id="fullPaymentBtn">دفع كامل</button>
+    <button id="partialPaymentBtn">دفع جزئي</button>
+    <button id="unpaidBtn">غير مدفوع</button>
 
-    <div class="payment-status">
-      <button id="fullPaymentButton">دفع كامل</button>
-      <button id="partialPaymentButton">دفع جزئي</button>
-      <button id="unpaidButton">غير مدفوع</button>
+    <div class="confirmation-message" id="confirmationMessage" style="display: none;">
+      تم تحديث حالة الدفع بنجاح!
     </div>
-
-    <div class="partial-payment-container" id="partialPaymentContainer">
-      <label for="partialAmount">أدخل المبلغ المدفوع جزئيًا:</label>
-      <input type="number" id="partialAmount" class="input-field" placeholder="المبلغ المدفوع">
-      <button id="confirmPartialPaymentButton">تأكيد الدفع الجزئي</button>
+    
+    <div id="warningMessage" style="display: none;">
+      <p>هل أنت متأكد من المبلغ المدفوع؟</p>
+      <button id="confirmPaymentBtn">تأكيد</button>
+      <button id="cancelBtn" class="cancel-button">إلغاء</button>
     </div>
-
-    <div class="confirmation-message" id="confirmationMessage" style="display: none;">تم الدفع بنجاح!</div>
-
-    <button id="cancelButton" class="delete-button">إلغاء</button>
   </div>
 
   <script>
     // جلب البيانات من localStorage
-    let selectedItems = JSON.parse(localStorage.getItem('selectedItems')) || [];
     let customerName = localStorage.getItem('selectedCustomer') || 'غير محدد';
     let invoiceNumber = parseInt(localStorage.getItem('invoiceNumber') || '1');
-    let totalAmount = 0;
+    let invoiceDate = new Date().toLocaleDateString();
+    let totalAmount = parseFloat(localStorage.getItem('totalAmount')) || 0;
 
-    // عرض اسم الزبون وتاريخ الفاتورة ورقم الفاتورة
+    // عرض البيانات في الصفحة
     document.getElementById('customerName').textContent = customerName;
-    document.getElementById('invoiceDate').textContent = new Date().toLocaleDateString();
     document.getElementById('invoiceNumber').textContent = invoiceNumber;
-
-    // حساب المجموع
-    selectedItems.forEach(item => {
-      totalAmount += item.quantity * item.price;
-    });
-
-    // عرض المجموع
+    document.getElementById('invoiceDate').textContent = invoiceDate;
     document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
 
-    // حالة الدفع - دفع كامل
-    document.getElementById('fullPaymentButton').addEventListener('click', () => {
-      // حفظ حالة الدفع كدفع كامل
-      savePaymentStatus('دفع كامل');
-      showConfirmationMessage();
+    // التفاعل مع الأزرار
+    document.getElementById('fullPaymentBtn').addEventListener('click', () => {
+      // تغيير حالة الدفع إلى دفع كامل
+      updatePaymentStatus('دفع كامل');
     });
 
-    // حالة الدفع - دفع جزئي
-    document.getElementById('partialPaymentButton').addEventListener('click', () => {
+    document.getElementById('partialPaymentBtn').addEventListener('click', () => {
+      // إظهار خانة الدفع الجزئي
       document.getElementById('partialPaymentContainer').style.display = 'block';
     });
 
-    // تأكيد الدفع الجزئي
-    document.getElementById('confirmPartialPaymentButton').addEventListener('click', () => {
+    document.getElementById('unpaidBtn').addEventListener('click', () => {
+      // تغيير حالة الدفع إلى غير مدفوع
+      updatePaymentStatus('غير مدفوع');
+    });
+
+    document.getElementById('confirmPaymentBtn').addEventListener('click', () => {
+      // حفظ حالة الدفع الجزئي وتحديث المجموع
       let partialAmount = parseFloat(document.getElementById('partialAmount').value);
-      if (!isNaN(partialAmount) && partialAmount > 0) {
-        // تقليص المجموع الإجمالي بناءً على المبلغ المدفوع جزئيًا
+      if (!isNaN(partialAmount) && partialAmount < totalAmount) {
         totalAmount -= partialAmount;
-        savePaymentStatus('دفع جزئي');
-        showConfirmationMessage();
-      } else {
-        alert('يرجى إدخال المبلغ المدفوع بشكل صحيح');
+        updatePaymentStatus('دفع جزئي');
+        document.getElementById('confirmationMessage').style.display = 'block';
+        setTimeout(() => {
+          window.location.href = 'nextPage.html'; // الانتقال إلى الصفحة التالية
+        }, 1500);
       }
     });
 
-    // حالة الدفع - غير مدفوع
-    document.getElementById('unpaidButton').addEventListener('click', () => {
-      savePaymentStatus('غير مدفوع');
-      showConfirmationMessage();
+    document.getElementById('cancelBtn').addEventListener('click', () => {
+      // الرجوع إلى صفحة الفاتورة
+      window.location.href = 'facteur.html';
     });
 
-    // حفظ حالة الدفع في localStorage
-    function savePaymentStatus(status) {
-      let paymentStatus = {
-        invoiceNumber: invoiceNumber - 1,
-        customerName: customerName,
-        date: new Date().toLocaleDateString(),
-        total: totalAmount.toFixed(2),
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>صفحة الدفع</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
-    
-    body {
-      font-family: 'Amiri', serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(to bottom, #002b4d, #004c6d);
-      color: white;
-      text-align: center;
-      overflow-x: hidden;
-    }
-    h1 {
-      font-weight: 700;
-      margin: 20px;
-    }
-    .payment-container {
-      width: 80%;
-      margin: 20px auto;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      transform: perspective(800px) rotateX(10deg);
-      animation: float 3s ease-in-out infinite;
-    }
-    .payment-details p {
-      font-size: 18px;
-      margin: 10px 0;
-    }
-    .status-buttons {
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-    }
-    button {
-      padding: 10px 15px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s;
-    }
-    button:hover {
-      background-color: #1e7e34;
-    }
-    .back-button {
-      background-color: #007bff;
-    }
-    .back-button:hover {
-      background-color: #0056b3;
-    }
-    .confirmation-message {
-      margin-top: 20px;
-      color: #28a745;
-      font-weight: bold;
-      font-size: 18px;
-      display: none;
-    }
-    @keyframes float {
-      0% {
-        transform: perspective(800px) rotateX(10deg) translateY(0px);
-      }
-      50% {
-        transform: perspective(800px) rotateX(10deg) translateY(-10px);
-      }
-      100% {
-        transform: perspective(800px) rotateX(10deg) translateY(0px);
-      }
-    }
-  </style>
-</head>
-<body>
-  <h1>صفحة الدفع</h1>
-
-  <div class="payment-container">
-    <div class="payment-details">
-      <p>اسم الزبون: <span id="customerName"></span></p>
-      <p>رقم الفاتورة: <span id="invoiceNumber"></span></p>
-      <p>المبلغ الإجمالي: <span id="totalAmount"></span> درهم</p>
-    </div>
-
-    <div class="status-buttons">
-      <button id="paidButton">مدفوعة بالكامل</button>
-      <button id="unpaidButton">غير مدفوعة</button>
-      <button id="partiallyPaidButton">مدفوعة جزئياً</button>
-    </div>
-
-    <div class="confirmation-message" id="confirmationMessage"></div>
-    <button class="back-button" id="backButton">العودة</button>
-  </div>
-
-  <script>
-    // جلب بيانات الفاتورة من localStorage
-    let invoices = JSON.parse(localStorage.getItem('invoices')) || [];
-    let currentInvoice = invoices[invoices.length - 1]; // آخر فاتورة تم إضافتها
-
-    if (currentInvoice) {
-      document.getElementById('customerName').textContent = currentInvoice.customerName;
-      document.getElementById('invoiceNumber').textContent = currentInvoice.invoiceNumber;
-      document.getElementById('totalAmount').textContent = currentInvoice.total;
-    } else {
-      alert("لا توجد فاتورة متوفرة.");
-      window.location.href = 'invoicePage.html'; // إذا لم تكن هناك بيانات، العودة لصفحة الفاتورة
-    }
-
-    const confirmationMessage = document.getElementById('confirmationMessage');
-
-    // زر مدفوعة بالكامل
-    document.getElementById('paidButton').addEventListener('click', () => {
-      currentInvoice.status = "مدفوعة بالكامل";
-      saveInvoice();
-      showConfirmation("تم تحديث الحالة إلى: مدفوعة بالكامل");
-    });
-
-    // زر غير مدفوعة
-    document.getElementById('unpaidButton').addEventListener('click', () => {
-      currentInvoice.status = "غير مدفوعة";
-      saveInvoice();
-      showConfirmation("تم تحديث الحالة إلى: غير مدفوعة");
-    });
-
-    // زر مدفوعة جزئياً
-    document.getElementById('partiallyPaidButton').addEventListener('click', () => {
-      currentInvoice.status = "مدفوعة جزئياً";
-      saveInvoice();
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>صفحة الدفع</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
-    
-    body {
-      font-family: 'Amiri', serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(to bottom, #002b4d, #004c6d);
-      color: white;
-      text-align: center;
-      overflow-x: hidden;
-    }
-    h1 {
-      font-weight: 700;
-      margin: 20px;
-    }
-    .payment-container {
-      width: 80%;
-      margin: 20px auto;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      transform: perspective(800px) rotateX(10deg);
-      animation: float 3s ease-in-out infinite;
-    }
-    .payment-details p {
-      font-size: 18px;
-      margin: 10px 0;
-    }
-    .status-buttons {
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-    }
-    button {
-      padding: 10px 15px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s;
-    }
-    button:hover {
-      background-color: #1e7e34;
-    }
-    .back-button {
-      background-color: #007bff;
-    }
-    .back-button:hover {
-      background-color: #0056b3;
-    }
-    .confirmation-message {
-      margin-top: 20px;
-      color: #28a745;
-      font-weight: bold;
-      font-size: 18px;
-      display: none;
-    }
-    @keyframes float {
-      0% {
-        transform: perspective(800px) rotateX(10deg) translateY(0px);
-      }
-      50% {
-        transform: perspective(800px) rotateX(10deg) translateY(-10px);
-      }
-      100% {
-        transform: perspective(800px) rotateX(10deg) translateY(0px);
-      }
-    }
-  </style>
-</head>
-<body>
-  <h1>صفحة الدفع</h1>
-
-  <div class="payment-container">
-    <div class="payment-details">
-      <p>اسم الزبون: <span id="customerName">--</span></p>
-      <p>رقم الفاتورة: <span id="invoiceNumber">--</span></p>
-      <p>المبلغ الإجمالي: <span id="totalAmount">--</span> درهم</p>
-    </div>
-
-    <div class="status-buttons">
-      <button id="paidButton">مدفوعة بالكامل</button>
-      <button id="unpaidButton">غير مدفوعة</button>
-      <button id="partiallyPaidButton">مدفوعة جزئياً</button>
-    </div>
-
-    <div class="confirmation-message" id="confirmationMessage"></div>
-    <button class="back-button" id="backButton">العودة</button>
-  </div>
-
-  <script>
-    // جلب بيانات الفاتورة من localStorage
-    const invoices = JSON.parse(localStorage.getItem('invoices')) || [];
-    const currentInvoice = invoices[invoices.length - 1]; // آخر فاتورة
-
-    if (currentInvoice) {
-      // عرض البيانات على الصفحة
-      document.getElementById('customerName').textContent = currentInvoice.customerName || '--';
-      document.getElementById('invoiceNumber').textContent = currentInvoice.invoiceNumber || '--';
-      document.getElementById('totalAmount').textContent = currentInvoice.total || '--';
-    } else {
-      alert("لا توجد بيانات لفاتورة حالياً!");
-      window.location.href = 'invoicePage.html'; // الرجوع إلى صفحة الفاتورة
-    }
-
-    const confirmationMessage = document.getElementById('confirmationMessage');
-
-    // زر "مدفوعة بالكامل"
-    document.getElementById('paidButton').addEventListener('click', () => {
-      currentInvoice.status = "مدفوعة بالكامل";
-      saveInvoice();
-      showConfirmation("تم تحديث الحالة إلى: مدفوعة بالكامل");
-    });
-
-    // زر "غير مدفوعة"
-    document.getElementById('unpaidButton').addEventListener('click', () => {
-      currentInvoice.status = "غير مدفوعة";
-      saveInvoice();
-      showConfirmation("تم تحديث الحالة إلى: غير مدفوعة");
-    });
-
-    // زر "مدفوعة جزئياً"
-    document.getElementById('partiallyPaidButton').addEventListener('click', () => {
-      currentInvoice.status = "مدفوعة جزئياً";
-      saveInvoice();
-      showConfirmation("تم تحديث الحالة إلى: مدفوعة جزئياً");
-    });
-
-    // العودة لصفحة الفاتورة
-    document.getElementById('backButton').addEventListener('click', () => {
-      window.location.href = 'invoicePage.html';
-    });
-
-    // حفظ البيانات المحدثة في localStorage
-    function saveInvoice() {
-      invoices[invoices.length - 1] = currentInvoice;
-      localStorage.setItem('invoices', JSON.stringify(invoices));
-    }
-
-    // عرض رسالة التأكيد
-    function showConfirmation(message) {
-      confirmationMessage.textContent = message;
-      confirmationMessage.style.display = 'block';
-      setTimeout(() => {
-        confirmationMessage.style.display = 'none';
-      }, 2000);
+    function updatePaymentStatus(status) {
+      localStorage.setItem('paymentStatus', status);
+      document.getElementById('confirmationMessage').style.display = 'block';
     }
   </script>
+
 </body>
 </html>
