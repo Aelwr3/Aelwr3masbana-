@@ -313,15 +313,151 @@
     document.getElementById('partiallyPaidButton').addEventListener('click', () => {
       currentInvoice.status = "مدفوعة جزئياً";
       saveInvoice();
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>صفحة الدفع</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
+    
+    body {
+      font-family: 'Amiri', serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #002b4d, #004c6d);
+      color: white;
+      text-align: center;
+      overflow-x: hidden;
+    }
+    h1 {
+      font-weight: 700;
+      margin: 20px;
+    }
+    .payment-container {
+      width: 80%;
+      margin: 20px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transform: perspective(800px) rotateX(10deg);
+      animation: float 3s ease-in-out infinite;
+    }
+    .payment-details p {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+    .status-buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #1e7e34;
+    }
+    .back-button {
+      background-color: #007bff;
+    }
+    .back-button:hover {
+      background-color: #0056b3;
+    }
+    .confirmation-message {
+      margin-top: 20px;
+      color: #28a745;
+      font-weight: bold;
+      font-size: 18px;
+      display: none;
+    }
+    @keyframes float {
+      0% {
+        transform: perspective(800px) rotateX(10deg) translateY(0px);
+      }
+      50% {
+        transform: perspective(800px) rotateX(10deg) translateY(-10px);
+      }
+      100% {
+        transform: perspective(800px) rotateX(10deg) translateY(0px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>صفحة الدفع</h1>
+
+  <div class="payment-container">
+    <div class="payment-details">
+      <p>اسم الزبون: <span id="customerName">--</span></p>
+      <p>رقم الفاتورة: <span id="invoiceNumber">--</span></p>
+      <p>المبلغ الإجمالي: <span id="totalAmount">--</span> درهم</p>
+    </div>
+
+    <div class="status-buttons">
+      <button id="paidButton">مدفوعة بالكامل</button>
+      <button id="unpaidButton">غير مدفوعة</button>
+      <button id="partiallyPaidButton">مدفوعة جزئياً</button>
+    </div>
+
+    <div class="confirmation-message" id="confirmationMessage"></div>
+    <button class="back-button" id="backButton">العودة</button>
+  </div>
+
+  <script>
+    // جلب بيانات الفاتورة من localStorage
+    const invoices = JSON.parse(localStorage.getItem('invoices')) || [];
+    const currentInvoice = invoices[invoices.length - 1]; // آخر فاتورة
+
+    if (currentInvoice) {
+      // عرض البيانات على الصفحة
+      document.getElementById('customerName').textContent = currentInvoice.customerName || '--';
+      document.getElementById('invoiceNumber').textContent = currentInvoice.invoiceNumber || '--';
+      document.getElementById('totalAmount').textContent = currentInvoice.total || '--';
+    } else {
+      alert("لا توجد بيانات لفاتورة حالياً!");
+      window.location.href = 'invoicePage.html'; // الرجوع إلى صفحة الفاتورة
+    }
+
+    const confirmationMessage = document.getElementById('confirmationMessage');
+
+    // زر "مدفوعة بالكامل"
+    document.getElementById('paidButton').addEventListener('click', () => {
+      currentInvoice.status = "مدفوعة بالكامل";
+      saveInvoice();
+      showConfirmation("تم تحديث الحالة إلى: مدفوعة بالكامل");
+    });
+
+    // زر "غير مدفوعة"
+    document.getElementById('unpaidButton').addEventListener('click', () => {
+      currentInvoice.status = "غير مدفوعة";
+      saveInvoice();
+      showConfirmation("تم تحديث الحالة إلى: غير مدفوعة");
+    });
+
+    // زر "مدفوعة جزئياً"
+    document.getElementById('partiallyPaidButton').addEventListener('click', () => {
+      currentInvoice.status = "مدفوعة جزئياً";
+      saveInvoice();
       showConfirmation("تم تحديث الحالة إلى: مدفوعة جزئياً");
     });
 
     // العودة لصفحة الفاتورة
     document.getElementById('backButton').addEventListener('click', () => {
-      window.location.href = 'invoicePage.html'; // تغيير الرابط إذا كانت صفحة الفاتورة باسم آخر
+      window.location.href = 'invoicePage.html';
     });
 
-    // حفظ الفاتورة بعد تحديث الحالة
+    // حفظ البيانات المحدثة في localStorage
     function saveInvoice() {
       invoices[invoices.length - 1] = currentInvoice;
       localStorage.setItem('invoices', JSON.stringify(invoices));
