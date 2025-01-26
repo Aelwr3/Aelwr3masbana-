@@ -1,132 +1,124 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>صفحة الدفع</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
-
     body {
       font-family: 'Amiri', serif;
+      background: linear-gradient(to bottom, #002b4d, #004c6d);
+      color: #fff;
+      text-align: center;
       margin: 0;
       padding: 0;
-      background: linear-gradient(to bottom, #002b4d, #004c6d);
-      color: white;
-      text-align: center;
     }
-
-    h1 {
-      margin: 20px 0;
-      font-weight: 700;
-    }
-
-    .payment-container {
-      width: 80%;
-      margin: 20px auto;
+    .container {
+      margin: 50px auto;
       padding: 20px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
     }
-
-    .payment-info {
-      margin-bottom: 30px;
+    h1 {
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+    .info {
+      margin-bottom: 20px;
       font-size: 18px;
     }
-
-    .status-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
+    .info span {
+      font-weight: bold;
+      color: #00ffdd;
     }
-
-    button {
-      padding: 12px 20px;
-      font-size: 16px;
-      background-color: #004c6d;
-      color: white;
+    .buttons {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+    }
+    .buttons button {
+      padding: 10px 20px;
       border: none;
       border-radius: 5px;
+      font-size: 16px;
       cursor: pointer;
-      transition: background-color 0.3s, transform 0.2s;
+      background-color: #007a99;
+      color: #fff;
+      transition: background-color 0.3s ease;
     }
-
-    button:hover {
-      background-color: #003244;
-      transform: scale(1.05);
+    .buttons button:hover {
+      background-color: #005f73;
     }
-
-    #successMessage {
-      margin-top: 20px;
-      color: #28a745;
-      font-size: 18px;
-      display: none;
-    }
-
     #errorMessage {
       margin-top: 20px;
-      color: #ff5e57;
-      font-size: 18px;
-      display: none;
+      color: #ff6666;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
-
-  <h1>صفحة الدفع</h1>
-
-  <div class="payment-container">
-    <div class="payment-info">
-      <p>اسم الزبون: <span id="customerName"></span></p>
-      <p>رقم الفاتورة: <span id="invoiceNumber"></span></p>
-      <p>المبلغ الإجمالي: <span id="totalAmount"></span> درهم</p>
+  <div class="container">
+    <h1>صفحة الدفع</h1>
+    <div class="info">
+      <p>اسم الزبون: <span id="customerName">-</span></p>
+      <p>رقم الفاتورة: <span id="invoiceNumber">-</span></p>
+      <p>المبلغ الإجمالي: <span id="totalAmount">-</span> درهم</p>
     </div>
-
-    <div class="status-buttons">
+    <div class="buttons">
       <button id="paidButton">تم الدفع</button>
       <button id="unpaidButton">لم يتم الدفع</button>
       <button id="partialButton">دفع جزئي</button>
     </div>
-
-    <div id="successMessage">تم تحديث حالة الدفع بنجاح!</div>
-    <div id="errorMessage">حدث خطأ أثناء تحديث الحالة. حاول مرة أخرى.</div>
+    <p id="errorMessage" style="display: none;">لم يتم العثور على بيانات الفاتورة.</p>
   </div>
 
   <script>
     // جلب بيانات الفاتورة من localStorage
     const invoices = JSON.parse(localStorage.getItem('invoices')) || [];
-    const invoiceNumber = parseInt(localStorage.getItem('currentInvoiceNumber')) || 1;
+    const invoiceNumber = parseInt(localStorage.getItem('currentInvoiceNumber')) || 0;
     const invoice = invoices.find(inv => inv.invoiceNumber === invoiceNumber);
 
     if (invoice) {
+      // عرض بيانات الفاتورة
       document.getElementById('customerName').textContent = invoice.customerName;
       document.getElementById('invoiceNumber').textContent = invoice.invoiceNumber;
       document.getElementById('totalAmount').textContent = invoice.total;
+
+      // أزرار الدفع
+      document.getElementById('paidButton').addEventListener('click', () => {
+        invoice.paymentStatus = "مدفوع";
+        updateInvoices(invoices);
+        alert('تم تحديث حالة الدفع إلى مدفوع.');
+      });
+
+      document.getElementById('unpaidButton').addEventListener('click', () => {
+        invoice.paymentStatus = "غير مدفوع";
+        updateInvoices(invoices);
+        alert('تم تحديث حالة الدفع إلى غير مدفوع.');
+      });
+
+      document.getElementById('partialButton').addEventListener('click', () => {
+        const partialAmount = prompt('أدخل المبلغ المدفوع:');
+        if (partialAmount && !isNaN(partialAmount)) {
+          invoice.paymentStatus = `دفع جزئي: ${partialAmount} درهم`;
+          updateInvoices(invoices);
+          alert('تم تحديث حالة الدفع إلى دفع جزئي.');
+        } else {
+          alert('الرجاء إدخال مبلغ صحيح.');
+        }
+      });
     } else {
-      document.getElementById('errorMessage').textContent = 'لم يتم العثور على بيانات الفاتورة.';
+      // عرض رسالة خطأ إذا لم يتم العثور على بيانات
       document.getElementById('errorMessage').style.display = 'block';
     }
 
-    // تحديث حالة الدفع
-    function updatePaymentStatus(status) {
-      if (invoice) {
-        invoice.paymentStatus = status;
-        localStorage.setItem('invoices', JSON.stringify(invoices));
-
-        document.getElementById('successMessage').textContent = `تم تحديث حالة الدفع إلى: ${status}`;
-        document.getElementById('successMessage').style.display = 'block';
-      } else {
-        document.getElementById('errorMessage').textContent = 'لم يتم العثور على بيانات لتحديث الحالة.';
-        document.getElementById('errorMessage').style.display = 'block';
-      }
+    // تحديث بيانات الفواتير في localStorage
+    function updateInvoices(updatedInvoices) {
+      localStorage.setItem('invoices', JSON.stringify(updatedInvoices));
     }
-
-    // أزرار تغيير الحالة
-    document.getElementById('paidButton').addEventListener('click', () => updatePaymentStatus('مدفوع'));
-    document.getElementById('unpaidButton').addEventListener('click', () => updatePaymentStatus('غير مدفوع'));
-    document.getElementById('partialButton').addEventListener('click', () => updatePaymentStatus('مدفوع جزئيًا'));
   </script>
-
 </body>
 </html>
